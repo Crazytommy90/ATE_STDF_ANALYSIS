@@ -443,9 +443,9 @@ STDF_FILE_ERROR STDF_FILE::parser_to_hdf5(const wchar_t* filename)
 	StdfFAR* far_record = new StdfFAR();
 	far_record->parse(header);
 
-	//unsigned char cpu_type = far_record->get_cpu_type();
-	//if (cpu_type != 2)
-	//	return STDF_CPU_TYPE_NOT_SUPPORT;
+	unsigned char cpu_type = far_record->get_cpu_type();
+	if (cpu_type != 2)
+		return STDF_CPU_TYPE_NOT_SUPPORT;
 
 	unsigned char stdf_version = far_record->get_stdf_version();
 	if (stdf_version != 4)
