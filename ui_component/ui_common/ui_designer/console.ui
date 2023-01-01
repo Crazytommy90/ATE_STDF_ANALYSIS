@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1006</width>
+    <height>540</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>RightToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="action_select_run"/>
+   <addaction name="separator"/>
+   <addaction name="action_run_all"/>
+   <addaction name="separator"/>
+   <addaction name="action_refresh"/>
+  </widget>
+  <action name="action_select_run">
+   <property name="icon">
+    <iconset resource="../../ui_resource/pyqtsource.qrc">
+     <normaloff>:/pyqt/source/images/NavOverFlow_Start.png</normaloff>:/pyqt/source/images/NavOverFlow_Start.png</iconset>
+   </property>
+   <property name="text">
+    <string>select_run</string>
+   </property>
+  </action>
+  <action name="action_run_all">
+   <property name="icon">
+    <iconset resource="../../ui_resource/pyqtsource.qrc">
+     <normaloff>:/pyqt/source/images/icon_video.svg</normaloff>:/pyqt/source/images/icon_video.svg</iconset>
+   </property>
+   <property name="text">
+    <string>run_all</string>
+   </property>
+  </action>
+  <action name="action_refresh">
+   <property name="icon">
+    <iconset resource="../../ui_resource/pyqtsource.qrc">
+     <normaloff>:/pyqt/source/images/lc_convertinto3d.png</normaloff>:/pyqt/source/images/lc_convertinto3d.png</iconset>
+   </property>
+   <property name="text">
+    <string>refresh</string>
+   </property>
+   <property name="toolTip">
+    <string>刷新数据</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="../../ui_resource/pyqtsource.qrc"/>
+ </resources>
+ <connections/>
+</ui>

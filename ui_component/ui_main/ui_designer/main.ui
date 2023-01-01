@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1572</width>
+    <height>891</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget"/>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QToolBar" name="toolBar_right">
+   <property name="windowTitle">
+    <string>toolBar_3</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>RightToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="action_cascade"/>
+   <addaction name="separator"/>
+   <addaction name="action_material_report"/>
+   <addaction name="separator"/>
+   <addaction name="action_distribution"/>
+   <addaction name="action_distribution_trans"/>
+   <addaction name="action_comparing"/>
+   <addaction name="action_linear"/>
+   <addaction name="action_scatter"/>
+   <addaction name="action_box_plot"/>
+   <addaction name="action_mapping"/>
+   <addaction name="action_visual_map"/>
+   <addaction name="action_multiple_chart"/>
+   <addaction name="separator"/>
+   <addaction name="action_contact"/>
+   <addaction name="action_merge"/>
+   <addaction name="separator"/>
+   <addaction name="action_tools"/>
+   <addaction name="separator"/>
+   <addaction name="action_pyside2"/>
+   <addaction name="separator"/>
+   <addaction name="action_email"/>
+   <addaction name="separator"/>
+  </widget>
+  <widget class="QToolBar" name="toolBar_up">
+   <property name="windowTitle">
+    <string>toolBar_4</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>LeftToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="action_add_stdf_module"/>
+   <addaction name="action_path_select"/>
+   <addaction name="separator"/>
+   <addaction name="action_web_search"/>
+   <addaction name="separator"/>
+   <addaction name="action_server_scan"/>
+  </widget>
+  <action name="action_add_stdf_module">
+   <property name="icon">
+    <iconset resource="../../ui_resource/pyqtsource.qrc">
+     <normaloff>:/pyqt/source/images/Open.png</normaloff>:/pyqt/source/images/Open.png</iconset>
+   </property>
+   <property name="text">
+    <string>add_stdf_module</string>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;添加自选STDF数据&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </action>
+  <action name="action_cascade">
+   <property name="icon">
+    <iconset resource="../../ui_resource/pyqtsource.qrc">
+     <normaloff>:/pyqt/source/images/lc_duplicatepage.png</normaloff>:/pyqt/source/images/lc_duplicatepage.png</iconset>
+   </property>
+   <property name="text">
+    <string>cascade</string>
+   </property>
+   <property name="toolTip">
+    <string>级联显示工作空间中窗口</string>
+   </property>
+  </action>
+  <action name="action_distribution">
+   <property name="icon">
+    <iconset resource="../../ui_resource/pyqtsource.qrc">
+     <normaloff>:/pyqt/source/images/lc_drawchart.png</normaloff>:/pyqt/source/images/lc_drawchart.png</iconset>
+   </property>
+   <property name="text">
+    <string>distribution</string>
+   </property>
+   <property name="toolTip">
+    <string>测试数据分布图</string>
+   </property>
+  </action>
+  <action name="action_distribution_trans">
+   <property name="icon">
+    <iconset resource="../../ui_resource/pyqtsource.qrc">
+     <normaloff>:/pyqt/source/images/lc_aligndown.png</normaloff>:/pyqt/source/images/lc_aligndown.png</iconset>
+   </property>
+   <property name="text">
+    <string>distribution_trans</string>
+   </property>
+   <property name="toolTip">
+    <string>横向分布图</string>
+   </property>
+  </action>
+  <action name="action_comparing">
+   <property name="icon">
+    <iconset resource="../../ui_resource/pyqtsource.qrc">
+     <normaloff>:/pyqt/source/images/lc_designerdialog.png</normaloff>:/pyqt/source/images/lc_designerdialog.png</iconset>
+   </property>
+   <property name="text">
+    <string>comparing</string>
+   </property>
+   <property name="toolTip">
+    <string>比较密度图</string>
+   </property>
+  </action>
+  <action name="action_linear">
+   <property name="icon">
+    <iconset resource="../../ui_resource/pyqtsource.qrc">
+     <normaloff>:/pyqt/source/images/lc_graphicfilterremovenoise.png</normaloff>:/pyqt/source/images/lc_graphicfilterremovenoise.png</iconset>
+   </property>
+   <property name="text">
+    <string>linear</string>
+   </property>
+   <property name="toolTip">
+    <string>线性回归</string>
+   </property>
+  </action>
+  <action name="action_scatter">
+   <property name="icon">
+    <iconset resource="../../ui_resource/pyqtsource.qrc">
+     <normaloff>:/pyqt/source/images/lc_linestyle.png</normaloff>:/pyqt/source/images/lc_linestyle.png</iconset>
+   </property>
+   <property name="text">
+    <string>scatter</string>
+   </property>
+   <property name="toolTip">
+    <string>散点图</string>
+   </property>
+  </action>
+  <action name="action_box_plot">
+   <property name="icon">
+    <iconset resource="../../ui_resource/pyqtsource.qrc">
+     <normaloff>:/pyqt/source/images/lc_distributeselection.png</normaloff>:/pyqt/source/images/lc_distributeselection.png</iconset>
+   </property>
+   <property name="text">
+    <string>box_plot</string>
+   </property>
+   <property name="toolTip">
+    <string>箱线图</string>
+   </property>
+  </action>
+  <action name="action_mapping">
+   <property name="icon">
+    <iconset resource="../../ui_resource/pyqtsource.qrc">
+     <normaloff>:/pyqt/source/images/lc_graphicfiltermosaic.png</normaloff>:/pyqt/source/images/lc_graphicfiltermosaic.png</iconset>
+   </property>
+   <property name="text">
+    <string>mapping</string>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Soft&amp;amp;Hard&amp;amp;TESTNO Bin Mapping&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </action>
+  <action name="action_visual_map">
+   <property name="icon">
+    <iconset resource="../../ui_resource/pyqtsource.qrc">
+     <normaloff>:/pyqt/source/images/lc_objectcatalog.png</normaloff>:/pyqt/source/images/lc_objectcatalog.png</iconset>
+   </property>
+   <property name="text">
+    <string>visual_map</string>
+   </property>
+  </action>
+  <action name="action_merge">
+   <property name="icon">
+    <iconset resource="../../ui_resource/pyqtsource.qrc">
+     <normaloff>:/pyqt/source/images/dbaddrelation.png</normaloff>:/pyqt/source/images/dbaddrelation.png</iconset>
+   </property>
+   <property name="text">
+    <string>merge</string>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;数据链接,算子参数制定&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </action>
+  <action name="action_pyside2">
+   <property name="icon">
+    <iconset resource="../../ui_resource/pyqtsource.qrc">
+     <normaloff>:/pyqt/source/images/NavOverFlow_Info.png</normaloff>:/pyqt/source/images/NavOverFlow_Info.png</iconset>
+   </property>
+   <property name="text">
+    <string>pyside2</string>
+   </property>
+   <property name="toolTip">
+    <string>关于PYSIDE2</string>
+   </property>
+  </action>
+  <action name="action_tools">
+   <property name="icon">
+    <iconset resource="../../ui_resource/pyqtsource.qrc">
+     <normaloff>:/pyqt/source/images/icon-set-squares-empty.png</normaloff>:/pyqt/source/images/icon-set-squares-empty.png</iconset>
+   </property>
+   <property name="text">
+    <string>tools</string>
+   </property>
+   <property name="toolTip">
+    <string>工具</string>
+   </property>
+  </action>
+  <action name="action_email">
+   <property name="icon">
+    <iconset resource="../../ui_resource/pyqtsource.qrc">
+     <normaloff>:/pyqt/source/images/lc_mailmergeemaildocuments.png</normaloff>:/pyqt/source/images/lc_mailmergeemaildocuments.png</iconset>
+   </property>
+   <property name="text">
+    <string>email</string>
+   </property>
+   <property name="toolTip">
+    <string>反馈</string>
+   </property>
+  </action>
+  <action name="action_qt_scatter">
+   <property name="icon">
+    <iconset resource="../../ui_resource/pyqtsource.qrc">
+     <normaloff>:/pyqt/source/images/lc_linestyle.png</normaloff>:/pyqt/source/images/lc_linestyle.png</iconset>
+   </property>
+   <property name="text">
+    <string>qt_scatter</string>
+   </property>
+   <property name="toolTip">
+    <string>qt散点图,因性能问题,数据会做抽样</string>
+   </property>
+  </action>
+  <action name="action_multiple_chart">
+   <property name="icon">
+    <iconset resource="../../ui_resource/pyqtsource.qrc">
+     <normaloff>:/pyqt/source/images/lc_autooutline.png</normaloff>:/pyqt/source/images/lc_autooutline.png</iconset>
+   </property>
+   <property name="text">
+    <string>multiple_chart</string>
+   </property>
+   <property name="toolTip">
+    <string>组合多个JMP脚本同时绘制多种图像</string>
+   </property>
+  </action>
+  <action name="action_path_select">
+   <property name="icon">
+    <iconset resource="../../ui_resource/pyqtsource.qrc">
+     <normaloff>:/pyqt/source/images/lc_openremote.png</normaloff>:/pyqt/source/images/lc_openremote.png</iconset>
+   </property>
+   <property name="text">
+    <string>path_select</string>
+   </property>
+   <property name="toolTip">
+    <string>一次将选取文件夹下的STDF数据导入</string>
+   </property>
+  </action>
+  <action name="action_processing_report">
+   <property name="icon">
+    <iconset resource="../../ui_resource/pyqtsource.qrc">
+     <normaloff>:/pyqt/source/images/lc_dbviewtablenames.png</normaloff>:/pyqt/source/images/lc_dbviewtablenames.png</iconset>
+   </property>
+   <property name="text">
+    <string>制程能力报告</string>
+   </property>
+  </action>
+  <action name="action_contact">
+   <property name="icon">
+    <iconset resource="../../ui_resource/pyqtsource.qrc">
+     <normaloff>:/pyqt/source/images/lc_newwindow.png</normaloff>:/pyqt/source/images/lc_newwindow.png</iconset>
+   </property>
+   <property name="text">
+    <string>数组组合堆叠</string>
+   </property>
+   <property name="toolTip">
+    <string>即为多份数据上下组合为一份</string>
+   </property>
+  </action>
+  <action name="action_web_search">
+   <property name="icon">
+    <iconset resource="../../ui_resource/pyqtsource.qrc">
+     <normaloff>:/pyqt/source/images/hlinettp.png</normaloff>:/pyqt/source/images/hlinettp.png</iconset>
+   </property>
+   <property name="text">
+    <string>服务器搜索</string>
+   </property>
+  </action>
+  <action name="action_material_report">
+   <property name="icon">
+    <iconset resource="../../ui_resource/pyqtsource.qrc">
+     <normaloff>:/pyqt/source/images/lc_presentationcurrentslide.png</normaloff>:/pyqt/source/images/lc_presentationcurrentslide.png</iconset>
+   </property>
+   <property name="text">
+    <string>material_report</string>
+   </property>
+   <property name="toolTip">
+    <string>量产测试数据报表</string>
+   </property>
+  </action>
+  <action name="action_server_scan">
+   <property name="icon">
+    <iconset resource="../../ui_resource/pyqtsource.qrc">
+     <normaloff>:/pyqt/source/images/lc_sbaexecutesql.png</normaloff>:/pyqt/source/images/lc_sbaexecutesql.png</iconset>
+   </property>
+   <property name="text">
+    <string>server_scan</string>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Server Data Scan&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="../../ui_resource/pyqtsource.qrc"/>
+ </resources>
+ <connections/>
+</ui>

@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1154</width>
+    <height>663</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget"/>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>RightToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="separator"/>
+   <addaction name="action_sava_data"/>
+   <addaction name="separator"/>
+   <addaction name="action_dock_structure"/>
+   <addaction name="separator"/>
+   <addaction name="action_console"/>
+   <addaction name="separator"/>
+   <addaction name="action_limit"/>
+   <addaction name="separator"/>
+   <addaction name="action_processing_report"/>
+   <addaction name="separator"/>
+   <addaction name="action_qt_scatter"/>
+   <addaction name="action_qt_distribution_trans"/>
+   <addaction name="action_qt_visual_map"/>
+  </widget>
+  <action name="action_capability">
+   <property name="icon">
+    <iconset resource="../../ui_resource/pyqtsource.qrc">
+     <normaloff>:/pyqt/source/images/entirecolumn.png</normaloff>:/pyqt/source/images/entirecolumn.png</iconset>
+   </property>
+   <property name="text">
+    <string>capability</string>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;生成制程能力报告&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </action>
+  <action name="action_sava_data">
+   <property name="icon">
+    <iconset resource="../../ui_resource/pyqtsource.qrc">
+     <normaloff>:/pyqt/source/images/Save.png</normaloff>:/pyqt/source/images/Save.png</iconset>
+   </property>
+   <property name="text">
+    <string>sava_data</string>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;保存为csv&amp;amp;excel&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </action>
+  <action name="action_dock_structure">
+   <property name="icon">
+    <iconset resource="../../ui_resource/pyqtsource.qrc">
+     <normaloff>:/pyqt/source/images/graphicfilterpopart.png</normaloff>:/pyqt/source/images/graphicfilterpopart.png</iconset>
+   </property>
+   <property name="text">
+    <string>dock_structure</string>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;保存视图结构&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </action>
+  <action name="action_limit">
+   <property name="icon">
+    <iconset resource="../../ui_resource/pyqtsource.qrc">
+     <normaloff>:/pyqt/source/images/excel.svg</normaloff>:/pyqt/source/images/excel.svg</iconset>
+   </property>
+   <property name="text">
+    <string>limit比较</string>
+   </property>
+   <property name="toolTip">
+    <string>显示Limit间的差异性</string>
+   </property>
+  </action>
+  <action name="action_console">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../ui_resource/pyqtsource.qrc">
+     <normaloff>:/pyqt/source/images/python.png</normaloff>:/pyqt/source/images/python.png</iconset>
+   </property>
+   <property name="text">
+    <string>console</string>
+   </property>
+   <property name="toolTip">
+    <string>显示&amp;隐藏Python Console</string>
+   </property>
+  </action>
+  <action name="action_processing_report">
+   <property name="icon">
+    <iconset resource="../../ui_resource/pyqtsource.qrc">
+     <normaloff>:/pyqt/source/images/lc_dbformrename.png</normaloff>:/pyqt/source/images/lc_dbformrename.png</iconset>
+   </property>
+   <property name="text">
+    <string>制程能力报告</string>
+   </property>
+   <property name="toolTip">
+    <string>制程能力报告</string>
+   </property>
+  </action>
+  <action name="action_qt_scatter">
+   <property name="icon">
+    <iconset resource="../../ui_resource/pyqtsource.qrc">
+     <normaloff>:/pyqt/source/images/lc_linestyle.png</normaloff>:/pyqt/source/images/lc_linestyle.png</iconset>
+   </property>
+   <property name="text">
+    <string>scatter</string>
+   </property>
+   <property name="toolTip">
+    <string>散点图</string>
+   </property>
+  </action>
+  <action name="action_qt_visual_map">
+   <property name="icon">
+    <iconset resource="../../ui_resource/pyqtsource.qrc">
+     <normaloff>:/pyqt/source/images/lc_objectcatalog.png</normaloff>:/pyqt/source/images/lc_objectcatalog.png</iconset>
+   </property>
+   <property name="text">
+    <string>visual_map</string>
+   </property>
+  </action>
+  <action name="action_qt_distribution_trans">
+   <property name="icon">
+    <iconset resource="../../ui_resource/pyqtsource.qrc">
+     <normaloff>:/pyqt/source/images/lc_aligndown.png</normaloff>:/pyqt/source/images/lc_aligndown.png</iconset>
+   </property>
+   <property name="text">
+    <string>distribution_trans</string>
+   </property>
+   <property name="toolTip">
+    <string>横向分布图</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="../../ui_resource/pyqtsource.qrc"/>
+ </resources>
+ <connections/>
+</ui>

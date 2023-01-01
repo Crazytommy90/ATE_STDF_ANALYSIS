@@ -1,0 +1,3 @@
+web_search 专门用于搜索数据
+web_load 专门用于加载搜索的数据和网络报表的数据
+web_load 和file_load很像, 区别在于 web_load 传入的是ID, 从服务器中拉数据
