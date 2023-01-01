@@ -69,6 +69,8 @@ class SummaryCore:
         后台必然默认传送一个元组, 拆包为三份数据,并且传来的summary_df已经经过排序
         而且这个返回的数据是比较重要的!!!@后期是需要用在服务器缓存中的
         """
+        if not summary:
+            return
         if isinstance(summary, list):
             self.summary_df = pd.DataFrame(summary)
         else:

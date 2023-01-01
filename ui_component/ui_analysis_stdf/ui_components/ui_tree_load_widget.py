@@ -111,6 +111,8 @@ class TreeLoadWidget(QWidget, TreeLoadForm):
         self.treeWidget.expandAll()
 
     def set_tree(self):
+        if not self.summary.ready:
+            return Print.warning("数据解析未成功的!")
         TreeUtils.set_data_to_tree(self.treeWidget, self.summary.get_summary_tree(), True)
         self.treeWidget.expandAll()
         QWidgetUtils.widget_change_color(widget=self, background_color="#3316C6")
