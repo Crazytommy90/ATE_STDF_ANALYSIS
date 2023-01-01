@@ -256,7 +256,7 @@ class Main_Ui(QMainWindow, Ui_MainWindow):
         if data is None:
             return
         jmp_df, temp_calculation = data
-        if self.setting.comboBox.currentIndex() == UiGlobalVariable.PLOT_BACKEND[0]:
+        if self.setting.comboBox.currentText() == UiGlobalVariable.PLOT_BACKEND[0]:
             if UiGlobalVariable.JmpPlotSeparation:
                 for key, df in jmp_df.groupby("GROUP"):
                     save_csv_path = "{}/temp_{}.csv".format(GlobalVariable.JMP_CACHE_PATH, key)
@@ -290,7 +290,7 @@ class Main_Ui(QMainWindow, Ui_MainWindow):
         if data is None:
             return
         jmp_df, temp_calculation = data
-        if self.setting.comboBox.currentIndex() == UiGlobalVariable.PLOT_BACKEND[0]:
+        if self.setting.comboBox.currentText() == UiGlobalVariable.PLOT_BACKEND[0]:
             distribution_csv_path = self.save_df_to_csv(
                 jmp_df, "{}/temp_{}.csv".format(GlobalVariable.JMP_CACHE_PATH, script_name)
             )
@@ -314,8 +314,9 @@ class Main_Ui(QMainWindow, Ui_MainWindow):
         if data is None:
             return
         jmp_df, temp_calculation = data
-        if self.setting.comboBox.currentIndex() == UiGlobalVariable.PLOT_BACKEND[0]:
-            fit_csv_path = self.save_df_to_csv(jmp_df, "{}/temp_{}.csv".format(GlobalVariable.JMP_CACHE_PATH, script_name))
+        if self.setting.comboBox.currentText() == UiGlobalVariable.PLOT_BACKEND[0]:
+            fit_csv_path = self.save_df_to_csv(jmp_df,
+                                               "{}/temp_{}.csv".format(GlobalVariable.JMP_CACHE_PATH, script_name))
             if fit_csv_path is None:
                 return self.message_show(f'CSV数据产生失败!!! ')
             jmp_script = JmpScript.factory(
@@ -375,7 +376,7 @@ class Main_Ui(QMainWindow, Ui_MainWindow):
         if data is None:
             return
         jmp_df, temp_calculation = data
-        if self.setting.comboBox.currentIndex() == UiGlobalVariable.PLOT_BACKEND[0]:
+        if self.setting.comboBox.currentText() == UiGlobalVariable.PLOT_BACKEND[0]:
             distribution_csv_path = self.save_df_to_csv(
                 jmp_df, "{}/temp_{}.csv".format(GlobalVariable.JMP_CACHE_PATH, script_name)
             )
@@ -396,7 +397,7 @@ class Main_Ui(QMainWindow, Ui_MainWindow):
         if data is None:
             return
         jmp_df, temp_calculation = data
-        if self.setting.comboBox.currentIndex() == UiGlobalVariable.PLOT_BACKEND[0]:
+        if self.setting.comboBox.currentText() == UiGlobalVariable.PLOT_BACKEND[0]:
             distribution_csv_path = self.save_df_to_csv(
                 jmp_df, "{}/temp_{}.csv".format(GlobalVariable.JMP_CACHE_PATH, script_name)
             )
@@ -437,7 +438,7 @@ class Main_Ui(QMainWindow, Ui_MainWindow):
             bin_head = "HARD_BIN"
         if bin_head is None:
             return
-        if self.setting.comboBox.currentIndex() == UiGlobalVariable.PLOT_BACKEND[0]:
+        if self.setting.comboBox.currentText() == UiGlobalVariable.PLOT_BACKEND[0]:
             mapping_csv_str = "{}_{}".format("bin_temp", bin_head)
             mapping_csv_path = self.save_df_to_csv(
                 jmp_df, "{}/temp_{}.csv".format(GlobalVariable.JMP_CACHE_PATH, mapping_csv_str)
@@ -446,8 +447,9 @@ class Main_Ui(QMainWindow, Ui_MainWindow):
                 JmpFile.load_csv_file(mapping_csv_path),
                 JmpFactory.bin_mapping(temp_calculation, jmp_df=jmp_df, bin_head=bin_head),
             )
-            JmpFile.save_with_run_script(jmp_script,
-                                         scrip_name='{}/temp_{}.jsl'.format(GlobalVariable.JMP_CACHE_PATH, mapping_csv_str))
+            JmpFile.save_with_run_script(
+                jmp_script, scrip_name='{}/temp_{}.jsl'.format(GlobalVariable.JMP_CACHE_PATH, mapping_csv_str)
+            )
             self.mapping_select_dialog.hide()
 
     @Slot()
@@ -460,7 +462,7 @@ class Main_Ui(QMainWindow, Ui_MainWindow):
         if data is None:
             return
         jmp_df, temp_calculation = data
-        if self.setting.comboBox.currentIndex() == UiGlobalVariable.PLOT_BACKEND[0]:
+        if self.setting.comboBox.currentText() == UiGlobalVariable.PLOT_BACKEND[0]:
             visual_csv_path = self.save_df_to_csv(
                 jmp_df, "{}/temp_{}.csv".format(GlobalVariable.JMP_CACHE_PATH, script_name)
             )
@@ -494,7 +496,7 @@ class Main_Ui(QMainWindow, Ui_MainWindow):
         if data is None:
             return
         jmp_df, temp_calculation = data
-        if self.setting.comboBox.currentIndex() == UiGlobalVariable.PLOT_BACKEND[0]:
+        if self.setting.comboBox.currentText() == UiGlobalVariable.PLOT_BACKEND[0]:
             multi_csv_path = self.save_df_to_csv(
                 jmp_df, "{}/temp_{}.csv".format(GlobalVariable.JMP_CACHE_PATH, "mult_csv")
             )
