@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-@File    : visual_map.py
+@File    : chart_visual_map.py
 @Author  : Link
 @Time    : 2022/6/5 10:31
 @Mark    : 
@@ -10,16 +10,20 @@
 import math
 
 from PySide2 import QtWidgets
+from PySide2.QtGui import QResizeEvent, QCloseEvent
+from PySide2.QtWidgets import QWidget
 from pyqtgraph import GraphicsLayoutWidget, ImageItem, ColorBarItem, colormap, HistogramLUTItem, InfiniteLine
 
 import numpy as np
 
 from chart_core.chart_pyqtgraph.core.visual.visual import *
+
+from chart_core.chart_pyqtgraph.ui_components.ui_unit_chart import UnitChartWindow
 from common.li import Li
 from ui_component.ui_app_variable import UiGlobalVariable
 
 
-class VisualMapChart(QtWidgets.QWidget):
+class VisualMapChart(UnitChartWindow):
     """
     不加入limit, 最小单元是GROUP, 不通过SITE去分组
     """
@@ -35,21 +39,28 @@ class VisualMapChart(QtWidgets.QWidget):
     def __init__(self, li: Li):
         super(VisualMapChart, self).__init__()
         self.li = li
+
+        self.widGet = QWidget()
         self.pw = GraphicsLayoutWidget()
-        self.gridLayout = QtWidgets.QVBoxLayout(self)
+        self.gridLayout = QtWidgets.QVBoxLayout(self.widGet)
         self.label = QtWidgets.QLabel()
         font = self.label.font()
         font.setPointSize(15)
         self.label.setFont(font)
         self.gridLayout.addWidget(self.label)
         self.gridLayout.addWidget(self.pw)
+        self.setCentralWidget(self.widGet)
         if UiGlobalVariable.GraphUseLocalColor:
             color = colormap.get('./colors/CET-D8.csv')
         else:
             color = colormap.get("CET-D8")
         self.c = color
-        self.li.QChartSelect.connect(self.set_front_chart)
-        self.li.QChartRefresh.connect(self.set_front_chart)
+        self.li.QChartSelect.connect(self.li_chart_signal)
+        self.li.QChartRefresh.connect(self.li_chart_signal)
+
+    def li_chart_signal(self):
+        if self.action_signal_binding.isChecked():
+            self.set_front_chart()
 
     def set_data(self, key: int):
         """
@@ -134,8 +145,15 @@ class VisualMapChart(QtWidgets.QWidget):
         # isoLine.setValue(0.0022)
 
     def __del__(self):
-        print("delete")
         try:
             self.li.QChartSelect.disconnect(self.set_front_chart)
         except RuntimeError:
             pass
+        try:
+            self.li.QChartRefresh.disconnect(self.set_front_chart)
+        except RuntimeError:
+            pass
+
+    def closeEvent(self, event: QCloseEvent) -> None:
+        self.__del__()
+        super(VisualMapChart, self).closeEvent(event)

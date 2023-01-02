@@ -7,18 +7,22 @@
 @Software: PyCharm
 @Remark  : PyqtGraph
 """
-
+import sys
 import unittest
 
-import numpy
 import pyqtgraph as pg
+from PySide2.QtWidgets import QApplication
 
 from app_test.test_utils.log_utils import Print
 from app_test.test_utils.mixins import Hdf5DataLoad
 from app_test.test_utils.wrapper_utils import Tester
-from chart_core.chart_pyqtgraph.trans_bar import TransBarChart
-from chart_core.chart_pyqtgraph.trans_scatter import TransScatterChart
-from chart_core.chart_pyqtgraph.visual_map import VisualMapChart
+from chart_core.chart_pyqtgraph.core.mixin import ChartType
+from chart_core.chart_pyqtgraph.poll import ChartDockWindow
+from chart_core.chart_pyqtgraph.ui_components.chart_trans_bar import TransBarChart
+from chart_core.chart_pyqtgraph.ui_components.chart_trans_scatter import TransScatterChart
+from chart_core.chart_pyqtgraph.ui_components.chart_visual_map import VisualMapChart
+from chart_core.chart_pyqtgraph.ui_components.ui_multi_chart import MultiChartWindow
+from chart_core.chart_pyqtgraph.ui_components.ui_unit_chart import UnitChartWindow
 
 pg.setConfigOption('background', 'w')
 pg.setConfigOption('foreground', 'k')
@@ -50,6 +54,18 @@ class QtGraphPlotCase(unittest.TestCase, Hdf5DataLoad):
         p1.addItem(inf1)
 
         pg.exec()
+
+    def test_unit_chart_widget(self):
+        """
+        所有的chart都继承unit chart widget
+        :return:
+        """
+        app = QApplication.instance()
+        if app is None:
+            app = QApplication(sys.argv)
+        win = UnitChartWindow()
+        win.show()
+        app.exec_()
 
     @Tester(
         ["load_data"],
@@ -116,15 +132,16 @@ class QtGraphPlotCase(unittest.TestCase, Hdf5DataLoad):
         :param kwargs:
         :return:
         """
-        win = pg.GraphicsLayoutWidget()
-        pg.setConfigOptions(antialias=True)
+        app = QApplication.instance()
+        if app is None:
+            app = QApplication(sys.argv)
         scatter_chart = TransScatterChart(self.li)
         scatter_chart.set_data(22)  # TEST_ID == 1
         scatter_chart.set_range_self()
         scatter_chart.set_df_chart()
         scatter_chart.set_line_self()
-        scatter_chart.pw_show()
-        pg.exec()
+        scatter_chart.show()
+        app.exec_()
 
     @Tester(
         ["test_set_group"],
@@ -151,13 +168,14 @@ class QtGraphPlotCase(unittest.TestCase, Hdf5DataLoad):
         good
         :return:
         """
-        win = pg.GraphicsLayoutWidget()
-        pg.setConfigOptions(antialias=True)
+        app = QApplication.instance()
+        if app is None:
+            app = QApplication(sys.argv)
         visual_map_chart = VisualMapChart(self.li)
         visual_map_chart.set_data(22)
         visual_map_chart.set_front_chart()
-        visual_map_chart.pw_show()
-        pg.exec()
+        visual_map_chart.show()
+        app.exec_()
 
     @Tester(
         ["test_set_group"],
@@ -170,15 +188,16 @@ class QtGraphPlotCase(unittest.TestCase, Hdf5DataLoad):
         :param kwargs:
         :return:
         """
-        win = pg.GraphicsLayoutWidget()
-        pg.setConfigOptions(antialias=True)
+        app = QApplication.instance()
+        if app is None:
+            app = QApplication(sys.argv)
         bar_chart = TransBarChart(self.li)
         bar_chart.set_data(22)  # TEST_ID == 1
         bar_chart.set_range_self()
         bar_chart.set_df_chart()
         bar_chart.set_line_self()
-        bar_chart.pw_show()
-        pg.exec()
+        bar_chart.show()
+        app.exec_()
 
     @Tester(
         ["test_set_group"],
@@ -197,31 +216,92 @@ class QtGraphPlotCase(unittest.TestCase, Hdf5DataLoad):
         exec_time=True,
         skip_args_time=True,
     )
-    def test_multi_plot(self):
+    def test_multi_connect_plot(self):
         """
+        测试多个图形之间是否可以链接
         success
         :return:
         """
-        win = pg.GraphicsLayoutWidget()
-        pg.setConfigOptions(antialias=True)
+        app = QApplication.instance()
+        if app is None:
+            app = QApplication(sys.argv)
 
         scatter_chart = TransScatterChart(self.li)
         scatter_chart.set_data(22)  # TEST_ID == 1
         scatter_chart.set_range_self()
         scatter_chart.set_df_chart()
         scatter_chart.set_line_self()
-        scatter_chart.pw_show()
+        scatter_chart.show()
 
         bar_chart = TransBarChart(self.li)
         bar_chart.set_data(22)  # TEST_ID == 1
         bar_chart.set_range_self()
         bar_chart.set_df_chart()
         bar_chart.set_line_self()
-        bar_chart.pw_show()
+        bar_chart.show()
 
         visual_map_chart = VisualMapChart(self.li)
         visual_map_chart.set_data(22)
         visual_map_chart.set_front_chart()
-        visual_map_chart.pw_show()
+        visual_map_chart.show()
 
-        pg.exec()
+        app.exec_()
+
+    def test_multi_chart_widget(self):
+        """
+        所有的chart都继承unit chart widget
+        :return:
+        """
+        app = QApplication.instance()
+        if app is None:
+            app = QApplication(sys.argv)
+        win = MultiChartWindow(self.li)
+        win.show()
+        app.exec_()
+
+    def test_multi_chart_dock_window(self):
+        """
+        :return:
+        """
+        app = QApplication.instance()
+        if app is None:
+            app = QApplication(sys.argv)
+        win = ChartDockWindow(self.li)
+        win.show()
+        app.exec_()
+
+    @Tester(
+        ["test_set_group"],
+        exec_time=True,
+        skip_args_time=True,
+    )
+    def test_multi_chart_plot(self):
+        """
+        所有的chart都继承unit chart widget
+        :return:
+        """
+        app = QApplication.instance()
+        if app is None:
+            app = QApplication(sys.argv)
+        win = MultiChartWindow(self.li)
+        win.set_data([2, 3], ChartType.TransScatter)
+        win.show()
+        app.exec_()
+
+    @Tester(
+        ["test_set_group"],
+        exec_time=True,
+        skip_args_time=True,
+    )
+    def test_multi_chart_dock_plot(self):
+        """
+
+        :return:
+        """
+        app = QApplication.instance()
+        if app is None:
+            app = QApplication(sys.argv)
+        win = ChartDockWindow(self.li)
+        win.add_chart_dock([2, 3], ChartType.TransScatter)
+        win.show()
+        app.exec_()

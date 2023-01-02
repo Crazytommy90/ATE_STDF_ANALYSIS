@@ -3,7 +3,7 @@
 @Author  : Link
 @Time    : 2022/5/12 13:53
 @Software: PyCharm
-@File    : trans_bar.py
+@File    : chart_trans_bar.py
 @Remark  : 
 """
 
@@ -13,16 +13,18 @@ from typing import List, Union, Tuple, Any
 import numpy as np
 import pandas as pd
 from PySide2 import QtCore
+from PySide2.QtGui import QCloseEvent
 from pyqtgraph import InfiniteLine, BarGraphItem
 
 from app_test.test_utils.wrapper_utils import Time
-from chart_core.chart_pyqtgraph.core.mixin import BasePlot, GraphRangeSignal, MyPlotWidget
+from chart_core.chart_pyqtgraph.core.mixin import BasePlot, GraphRangeSignal, PlotWidget
 from chart_core.chart_pyqtgraph.core.view_box import CustomViewBox
+from chart_core.chart_pyqtgraph.ui_components.ui_unit_chart import UnitChartWindow
 from common.li import Li
 from ui_component.ui_app_variable import UiGlobalVariable
 
 
-class TransBarChart(QtCore.QObject, BasePlot):
+class TransBarChart(UnitChartWindow, BasePlot):
     """
     横向柱状图, 用新的数据类型后, 运行时间长的有点过分了/(ㄒoㄒ)/~~
         TODO: rota: 0b000000
@@ -46,8 +48,8 @@ class TransBarChart(QtCore.QObject, BasePlot):
         self.sig = 0 if self.rota & 0b1000 else 1
 
         self.vb = CustomViewBox()
-        self.pw = MyPlotWidget(viewBox=self.vb, enableMenu=False)
-        self.pw.closeSignal.connect(self.__del__)
+        self.pw = PlotWidget(viewBox=self.vb, enableMenu=False)
+        self.setCentralWidget(self.pw)
         self.pw.hideButtons()
 
         self.bg1 = BarGraphItem(x0=[], y=[], y0=[], y1=[], width=[])
@@ -63,8 +65,8 @@ class TransBarChart(QtCore.QObject, BasePlot):
 
         self.pw.setMouseEnabled(x=False)
         self.vb.select_signal.connect(self.select_range)
-        self.li.QChartSelect.connect(self.set_front_chart)
-        self.li.QChartRefresh.connect(self.set_front_chart)
+        self.li.QChartSelect.connect(self.li_chart_signal)
+        self.li.QChartRefresh.connect(self.li_chart_signal)
 
         self.chart_v_lines = []
 
@@ -79,11 +81,17 @@ class TransBarChart(QtCore.QObject, BasePlot):
 
         self.vb.scene().sigMouseMoved.connect(mouseMoved)
 
+    def li_chart_signal(self):
+        if self.action_signal_binding.isChecked():
+            self.set_front_chart()
+
     def select_range(self, axs: Union[List[QtCore.QRectF], None]):
         """
         区间选取后触发,更新chart_df
         :return:
         """
+        if not self.action_signal_binding.isChecked():
+            return
         if axs is None:
             """
             show all front
@@ -152,7 +160,6 @@ class TransBarChart(QtCore.QObject, BasePlot):
                 if key not in self.li.to_chart_csv_data.select_group:
                     continue
             if len(df) == 0:
-                # TODO: 注意, 没有数据的地方也要留有位置来可视化
                 continue
             temp_dis = df[self.key].value_counts(bins=self.list_bins, sort=False)
             if len(temp_dis) == 0:
@@ -199,7 +206,6 @@ class TransBarChart(QtCore.QObject, BasePlot):
                 if key not in self.li.to_chart_csv_data.select_group:
                     continue
             if len(df) == 0:
-                # TODO: 注意, 没有数据的地方也要留有位置来可视化
                 continue
             temp_dis = df[self.key].value_counts(bins=self.list_bins, sort=False)
             if len(temp_dis) == 0:
@@ -212,3 +218,7 @@ class TransBarChart(QtCore.QObject, BasePlot):
                 width.append(value)
         x0 = np.array(x0) * self.bar_width
         self.bg2.setOpts(x0=x0, y=y, y0=y0, y1=y1, width=width, brush=(217, 83, 25, 255))
+
+    def closeEvent(self, event: QCloseEvent) -> None:
+        self.__del__()
+        super(TransBarChart, self).closeEvent(event)

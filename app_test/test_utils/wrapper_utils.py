@@ -10,6 +10,7 @@
 
 import time
 from app_test.test_utils.log_utils import Print
+from common.app_variable import GlobalVariable
 
 
 class Tester:
@@ -63,6 +64,8 @@ class Time:
 
     def __call__(self, func):
         def wrapper(ctx, *args, **kwargs):
+            if not GlobalVariable.DEBUG:
+                return func(ctx, *args, **kwargs)
             start = time.perf_counter()
             res = func(ctx, *args, **kwargs)
             use_time = round(time.perf_counter() - start, 3)

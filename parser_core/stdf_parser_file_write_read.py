@@ -195,6 +195,7 @@ class ParserData:
         return DataModule(prr_df=prr_df, dtp_df=dtp_df, ptmd_df=ptmd_df)
 
     @staticmethod
+    @Time()
     def contact_data_module(args: List[DataModule], unit_id: int = 0, update_id: bool = False):
         """
         关键函数, 将多份的数据组合起来, 特别是不同程序的数据, 并将所有的TEST_ID重新分配, 按照 TEST_NUM:TEST_TXT 来分配唯一TEST_ID

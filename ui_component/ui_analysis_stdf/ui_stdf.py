@@ -21,6 +21,7 @@ from PySide2.QtWidgets import QMainWindow, QApplication, QWidget, QMessageBox
 
 from pyqtgraph.dockarea import *
 
+from chart_core.chart_pyqtgraph.core.mixin import ChartType
 from chart_core.chart_pyqtgraph.poll import ChartDockWindow
 from common.li import Li, SummaryCore
 from ui_component.ui_analysis_stdf.ui_components.ui_data_group import DataGroupWidget
@@ -224,20 +225,15 @@ class StdfLoadUi(QMainWindow, Ui_MainWindow):
     def on_action_qt_distribution_trans_triggered(self):
         """ 使用PYQT来拉出横向柱状分布图 """
         test_id_column: List[int] = self.get_test_id_column()
-        self.chart_ui.qt_distribution.clear()
-        self.chart_ui.dock_qt_distribution.show()
-        self.chart_ui.qt_distribution.set_data(test_id_column, 'trans_bar')
+        self.chart_ui.add_chart_dock(test_id_column, ChartType.TransBar)
         self.chart_ui.show()
         self.chart_ui.raise_()
 
     @Slot()
     def on_action_qt_scatter_triggered(self):
         """ 使用PYQT来拉出线性散点图 """
-        print("scatter")
         test_id_column: List[int] = self.get_test_id_column()
-        self.chart_ui.qt_scatter.clear()
-        self.chart_ui.dock_qt_scatter.show()
-        self.chart_ui.qt_scatter.set_data(test_id_column, 'scatter')
+        self.chart_ui.add_chart_dock(test_id_column, ChartType.TransScatter)
         self.chart_ui.show()
         self.chart_ui.raise_()
 
@@ -250,9 +246,7 @@ class StdfLoadUi(QMainWindow, Ui_MainWindow):
     def on_action_qt_visual_map_triggered(self):
         """ 使用PYQT来拉出Visual Map图 """
         test_id_column = self.get_test_id_column()
-        self.chart_ui.qt_visual_map.clear()
-        self.chart_ui.qt_visual_map.set_data(test_id_column, 'visual_map')
-        self.chart_ui.dock_qt_visual_map.show()
+        self.chart_ui.add_chart_dock(test_id_column, ChartType.VisualMap)
         self.chart_ui.show()
         self.chart_ui.raise_()
 

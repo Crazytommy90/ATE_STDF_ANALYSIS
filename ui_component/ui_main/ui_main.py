@@ -26,9 +26,9 @@ from chart_core.chart_jmp.jmp_file import JmpFile
 from chart_core.chart_jmp.jmp_plot import JmpPlot
 from chart_core.chart_jmp.jmp_script_factory import JmpScript
 from chart_core.chart_jmp_factory.class_jmp_factory import NewJmpFactory
-from chart_core.chart_pyqtgraph.pyqt_chart import PyqtCanvas
+from chart_core.chart_pyqtgraph.ui_components.chart_sample_line import PyqtCanvas
 from common.app_variable import GlobalVariable
-from ui_component.ui_common.my_text_browser import UiMessage, MQTextBrowser, Print
+from ui_component.ui_common.my_text_browser import UiMessage, MQTextBrowser
 from ui_component.ui_common.ui_utils import MdiLoad
 from ui_component.ui_main.mdi_data_concat import ContactWidget
 from ui_component.ui_main.ui_designer.ui_main import Ui_MainWindow

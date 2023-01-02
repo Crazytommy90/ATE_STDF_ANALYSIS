@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-@File    : trans_scatter.py
+@File    : chart_trans_scatter.py
 @Author  : Link
 @Time    : 2022/6/4 11:00
 @Mark    : 
@@ -15,15 +15,17 @@ import numpy as np
 import pandas as pd
 
 from PySide2 import QtCore
+from PySide2.QtGui import QResizeEvent, QCloseEvent
 from pyqtgraph import ScatterPlotItem, InfiniteLine
 
-from chart_core.chart_pyqtgraph.core.mixin import BasePlot, GraphRangeSignal, MyPlotWidget
+from chart_core.chart_pyqtgraph.core.mixin import BasePlot, GraphRangeSignal, PlotWidget
 from chart_core.chart_pyqtgraph.core.view_box import CustomViewBox, pg
+from chart_core.chart_pyqtgraph.ui_components.ui_unit_chart import UnitChartWindow
 from common.li import Li
 from ui_component.ui_app_variable import UiGlobalVariable
 
 
-class TransScatterChart(QtCore.QObject, BasePlot):
+class TransScatterChart(UnitChartWindow, BasePlot):
     """
     散点图
         TODO: rota: 0b000000
@@ -47,20 +49,20 @@ class TransScatterChart(QtCore.QObject, BasePlot):
         self.sig = 0 if self.rota & 0b1000 else 1
         self.vb = CustomViewBox()
 
-        self.pw = MyPlotWidget(viewBox=self.vb, enableMenu=False)
-        self.pw.closeSignal.connect(self.__del__)
+        self.pw = PlotWidget(viewBox=self.vb, enableMenu=False)
+        self.setCentralWidget(self.pw)
         self.pw.hideButtons()
         self.pw.addLegend(colCount=4)
 
         self.bottom_axis = self.pw.getAxis("bottom")
-        self.bottom_axis.setHeight(60)
+        self.bottom_axis.setHeight(20)
         self.left_axis = self.pw.getAxis("left")
         self.left_axis.setWidth(60)
 
         # self.pw.setMouseEnabled(x=False)
         self.vb.select_signal.connect(self.select_range)
-        self.li.QChartSelect.connect(self.set_front_chart)
-        self.li.QChartRefresh.connect(self.set_front_chart)
+        self.li.QChartSelect.connect(self.li_chart_signal)
+        self.li.QChartRefresh.connect(self.li_chart_signal)
         if UiGlobalVariable.GraphUseLocalColor:
             color = pg.colormap.get('./colors/CET-C6.csv')
         else:
@@ -85,7 +87,13 @@ class TransScatterChart(QtCore.QObject, BasePlot):
 
         self.vb.scene().sigMouseMoved.connect(mouseMoved)
 
+    def li_chart_signal(self):
+        if self.action_signal_binding.isChecked():
+            self.set_front_chart()
+
     def select_range(self, axs: Union[List[QtCore.QRectF], None]):
+        if not self.action_signal_binding.isChecked():
+            return
         if axs is None:
             self.li.set_chart_data(None)
             return
@@ -113,7 +121,7 @@ class TransScatterChart(QtCore.QObject, BasePlot):
         if self.key not in self.li.capability_key_dict:
             return
         if len(self.li.df_module.prr_df) > 3E3:
-            self.scatter_size = 5
+            self.scatter_size = 3
         if UiGlobalVariable.GraphPlotScatterSimple:
             if not self.change:
                 self.list_bins = 5
@@ -206,3 +214,7 @@ class TransScatterChart(QtCore.QObject, BasePlot):
                 plot = self.scatter_front_list[index]
                 plot.setData(x, result, clear=True, brush=tuple(brush))  # x.to_numpy(), y.to_numpy()
                 plot.show()
+
+    def closeEvent(self, event: QCloseEvent) -> None:
+        self.__del__()
+        super(TransScatterChart, self).closeEvent(event)

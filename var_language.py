@@ -5,7 +5,14 @@
 @File    : var_language.py
 @Author  : Link
 @Time    : 2022/12/24 11:22
-@Mark    : 
+@Mark    :
+
+    datas=[
+        ('parser_core\\dll_parser\\stdf_ctype.dll', '.'),
+        ('chart_core\\chart_pyqtgraph\\core\\visual\\visual.cp37-win_amd64.pyd', '.'),
+        ('colors\\CET-C6.csv', '.'),
+        ('colors\\CET-D8.csv', '.'),
+    ],
 """
 
 from dataclasses import dataclass

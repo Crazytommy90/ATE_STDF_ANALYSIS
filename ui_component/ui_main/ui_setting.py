@@ -59,5 +59,5 @@ class SettingWidget(QWidget, Ui_Form):
     @Slot()
     def checkbox_changed(self):
         self.group_emit.emit()
-        print(self.get_group_params())
-        print(self.get_da_group_params())
+        # print(self.get_group_params())
+        # print(self.get_da_group_params())

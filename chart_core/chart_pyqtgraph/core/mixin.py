@@ -9,26 +9,21 @@
 """
 
 from dataclasses import dataclass
+from enum import Enum
 
 import numpy as np
-from PySide2.QtCore import Signal
-from PySide2.QtGui import QCloseEvent
 from pyqtgraph import PlotWidget, InfiniteLine
 
 from common.li import Li
 from ui_component.ui_app_variable import UiGlobalVariable
 
 
-class MyPlotWidget(PlotWidget):
-    closeSignal = Signal()
-
-    def __init__(self, parent=None, background='default', plotItem=None, **kargs):
-        super(MyPlotWidget, self).__init__(parent=parent, background=background, plotItem=plotItem, **kargs)
-
-    def closeEvent(self, a0: QCloseEvent) -> None:
-        super(MyPlotWidget, self).closeEvent(a0)
-        self.close()
-        self.closeSignal.emit()
+class ChartType(Enum):
+    BinMap = 0x10
+    BinPareto = 0x11
+    TransBar = 0x20
+    TransScatter = 0x30
+    VisualMap = 0x40
 
 
 @dataclass
@@ -72,7 +67,7 @@ class BasePlot:
             0b____X_ -> zoom x    X轴放大缩小
             0b_____X -> zoom y    Y轴放大缩小
     """
-    pw: MyPlotWidget = None
+    pw: PlotWidget = None
     rota: int = None
     li: Li = None
     p_range: RangeData = None
@@ -222,8 +217,12 @@ class BasePlot:
         pass
 
     def __del__(self):
-        print("delete")
+        print("chart delete")
         try:
             self.li.QChartSelect.disconnect(self.set_front_chart)
+        except RuntimeError:
+            pass
+        try:
+            self.li.QChartRefresh.disconnect(self.set_front_chart)
         except RuntimeError:
             pass

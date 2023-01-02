@@ -3,7 +3,7 @@
 @Author  : Link
 @Time    : 2022/5/5 11:50
 @Software: PyCharm
-@File    : pyqt_chart.py
+@File    : chart_sample_line.py
 @Remark  : 
 """
 

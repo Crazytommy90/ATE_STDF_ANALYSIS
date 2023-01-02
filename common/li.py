@@ -281,7 +281,6 @@ class Li(QObject):
         self.select_summary["GROUP"] = "*"
         self.id_module_dict = id_module_dict
 
-    @Time()
     def concat(self):
         """
         TODO:
@@ -299,13 +298,10 @@ class Li(QObject):
         data_module_list = []
         for df_id, module in self.id_module_dict.items():
             data_module_list.append(module)
-        start = time.perf_counter()
         self.df_module = ParserData.contact_data_module(data_module_list)
         self.df_module.prr_df.set_index(["PART_ID"], inplace=True)
         self.df_module.dtp_df.set_index(["TEST_ID", "PART_ID"], inplace=True)
         self.df_module.prr_df["DA_GROUP"] = "*"
-        use_time = round(time.perf_counter() - start, 3)
-        print("func: exec time: {}.".format(use_time))
 
     def calculation_top_fail(self):
         """
@@ -356,14 +352,14 @@ class Li(QObject):
         """
         self.to_chart_csv_data.chart_df = chart_df
         if chart_df is None:
-            self.QChartSelect.emit()
+            self.select_chart()
             return
         group_data = {}
         for (group, da_group), df in self.to_chart_csv_data.chart_df.groupby(["GROUP", "DA_GROUP"]):
             key = f"{group}@{da_group}"
             group_data[key] = df
         self.to_chart_csv_data.group_chart_df = group_data
-        self.QChartSelect.emit()
+        self.select_chart()
 
     def set_data_group(self, group_params: Union[list, None], da_group_params: Union[list, None]):
         """
@@ -556,7 +552,7 @@ class Li(QObject):
         主要是可以更新Table界面上的制程能力报告, 比如limit更新后重新计算
         :return:
         """
-        print("update all QCalculation:emit")
+        print("update all QCalculation @emit")
         self.QCalculation.emit()
 
     def select_chart(self):
@@ -564,7 +560,7 @@ class Li(QObject):
         主要是用来选取绘图的数据, 在数据还是处于当前分组的一个状态下
         :return:
         """
-        print("select_chart QChartSelect:emit")
+        print("select_chart QChartSelect @emit")
         self.QChartSelect.emit()
 
     def refresh_chart(self):
@@ -572,5 +568,5 @@ class Li(QObject):
         这个主要是数据有突然的变化, 比如分组改变了, 触发这个后把绘图的数据刷新重新绘图, 不Select
         :return:
         """
-        print("refresh_chart QChartRefresh:emit")
+        print("refresh_chart QChartRefresh @emit")
         self.QChartRefresh.emit()
