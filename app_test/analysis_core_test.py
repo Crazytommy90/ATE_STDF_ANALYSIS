@@ -63,11 +63,7 @@ class ReadHdf5BaseAnalysisCase(unittest.TestCase, Hdf5DataLoad):
         """
 
         " 测试能否根据 TEST_ID/测试项目 这个测试项目的所有数据 "
-        df = self.df_module.dtp_df.query(
-            """
-            TEST_ID == 0
-            """
-        )
+        df = self.df_module.dtp_df.loc[1]
         print(df)
 
         " 测试是否可以识别测试数据的Only Pass "
@@ -78,7 +74,7 @@ class ReadHdf5BaseAnalysisCase(unittest.TestCase, Hdf5DataLoad):
         )
         print(df.query(
             """
-            PART_ID in @pass_df.PART_ID
+            index in @pass_df.index
             """
         ))
         pass_qty = len(pass_df)
@@ -92,7 +88,7 @@ class ReadHdf5BaseAnalysisCase(unittest.TestCase, Hdf5DataLoad):
         )
         print(df.query(
             """
-            PART_ID in @fail_df.PART_ID
+            index in @fail_df.index
             """
         ))
         fail_qty = len(fail_df)
@@ -152,14 +148,9 @@ class ReadHdf5BaseAnalysisCase(unittest.TestCase, Hdf5DataLoad):
         Example Data: Chroma, TTK(NI TestStand@), STS(NI TestStand@)
         :return:
         """
-        df1 = self.df_module.prr_df[["PART_ID", "X_COORD", "Y_COORD"]].groupby(["X_COORD", "Y_COORD"]).last()
+        df1 = self.df_module.prr_df[["X_COORD", "Y_COORD"]].groupby(["X_COORD", "Y_COORD"]).last()
         print(len(df1))
-        # df = self.df_module.prr_df.query(
-        #     """
-        #     PART_ID in @df1.PART_ID
-        #     """
-        # )
-        df = self.df_module.prr_df[self.df_module.prr_df.PART_ID.isin(df1.PART_ID)]
+        df = self.df_module.prr_df[self.df_module.prr_df.index.isin(df1.index)]
         print(df)
         Print.success("FinallyTestQty:{}".format(len(df)))
 
@@ -216,6 +207,7 @@ class ReadHdf5BaseAnalysisCase(unittest.TestCase, Hdf5DataLoad):
 
         top_fail_dict: dict = kwargs.get("test_calculation_top_fail")
         if top_fail_dict is None:
+            print("top fail is None")
             return
 
         capability_key_list = CapabilityUtils.calculation_capability(self.df_module, top_fail_dict)

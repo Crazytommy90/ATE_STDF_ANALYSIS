@@ -47,8 +47,8 @@ class Hdf5DataLoad:
         if self.load:
             return
         self.df_module = ParserData.load_hdf5_test(TestVar.HDF5_PATH)
-        self.df_module.prr_df.set_index(["PART_ID"], inplace=True)
-        self.df_module.dtp_df.set_index(["TEST_ID", "PART_ID"], inplace=True)
+        self.df_module.prr_df.set_index(["ID", "PART_ID"], inplace=True)
+        self.df_module.dtp_df.set_index(["TEST_ID", "ID", "PART_ID"], inplace=True)
         if self.df_module is None:
             raise Exception("ParserData.load_hdf5 fail!")
         self.summary = SummaryCore()

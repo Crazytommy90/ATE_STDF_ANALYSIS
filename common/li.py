@@ -107,6 +107,7 @@ class SummaryCore:
     def add_custom_node(self, ids: List[int], new_lot_id: str):
         """
         将多个数据组合为一个自定义的LOT, 比如两个版本的数据对比, 将一部分分为版本A(LOT_A), 另一部分分为版本B(LOT_B)
+        其实没那么复杂, 不需要新建各种五花八门的数据, 就直接把旧的列的LOT_ID改名即可
         {
             'FILE_PATH': '',
             'FILE_NAME': '',
@@ -134,59 +135,7 @@ class SummaryCore:
         """
         if self.summary_df is None:
             return
-
-        summary_info = self.summary_df[self.summary_df.ID.isin(ids)]
-        new_id = self.summary_df["ID"].max() + 1
-        file_path = []
-        file_name = []
-        part_flag = []
-        read_fail = []
-        qty, pass_qty = 0, 0
-        for row in summary_info.itertuples():
-            each_path = getattr(row, "HDF5_PATH")
-            each_part_flag = getattr(row, "PART_FLAG")
-            each_read_file = getattr(row, "READ_FAIL")
-            each_file = os.path.split(each_path)[-1]
-            prr = ParserData.load_prr_df(each_path)
-            yield_data = ParserData.get_yield_data(prr)
-            qty += yield_data["QTY"]
-            pass_qty += yield_data["PASS"]
-            file_path.append(each_path)
-            file_name.append(each_file)
-            part_flag.append(each_part_flag)
-            read_fail.append(each_read_file)
-        file_path_str = ";".join(file_path)
-        file_name_str = ";".join(file_name)
-        part_flag_str = ";".join(part_flag)
-        read_fail_str = ";".join(read_fail)
-        if qty == 0:
-            pass_yield = "0.0%"
-        else:
-            pass_yield = '{}%'.format(round(pass_qty / qty * 100, 2))
-        self.summary_df.loc[len(self.summary_df.index)] = [
-            "",  # FILE_PATH
-            file_name_str,  # FILE_NAME
-            new_id,  # ID
-            new_lot_id,  # LOT_ID
-            new_lot_id,  # SB_LOT_ID
-            "all",  # LOT_ID
-            "all",  # WAFER_ID
-            'all',  # BLUE_FILM_ID
-            'all',  # FLOW_ID
-            'all',  # PART_TYPE
-            'all',  # JOB_NAME
-            '~',  # TST_TEMP
-            '~',  # NODE_NAM
-            summary_info.SETUP_T.min(),  # SETUP_T
-            summary_info.START_T.min(),  # START_T
-            '~',  # SITE_CNT
-            qty,  # QTY
-            pass_qty,  # PASS
-            pass_yield,  # YIELD
-            part_flag_str,  # PART_FLAG
-            read_fail_str,  # READ_FAIL
-            file_path_str  # HDF5_PATH
-        ]
+        self.summary_df.loc[self.summary_df.ID.isin(ids), "LOT_ID"] = new_lot_id
 
     def load_select_data(self, ids: List[int], quick: bool = False, sample_num: int = 1E4):
         """
@@ -194,7 +143,7 @@ class SummaryCore:
         整理出一个比较完整的 ptmd 的整合dict
         重复的ptmd_dict就选用最新的
         主要给每个单元的Prr给一个ID用于数据链接
-        难度就是将载入的多份数据组合为一份数据
+        TODO: 不在一个summary中指向多个文件位置
         :param ids:
         :param quick:
         :param sample_num:
@@ -204,28 +153,12 @@ class SummaryCore:
         select_summary = self.summary_df[self.summary_df.ID.isin(ids)]
         for select in select_summary.itertuples():
             ID = getattr(select, "ID")
-
-            select_paths = getattr(select, "HDF5_PATH").split(";")
-
-            if len(select_paths) == 1:
-                data_module = ParserData.load_hdf5_analysis(
-                    getattr(select, "HDF5_PATH"), int(getattr(select, "PART_FLAG")),
-                    int(getattr(select, "READ_FAIL")),
-                    unit_id=ID,
-                )
-
-            else:
-                part_flag = getattr(select, "PART_FLAG").split(";")
-                read_fail = getattr(select, "READ_FAIL").split(";")
-                data_modules = []
-                for index in range(len(select_paths)):
-                    data_module = ParserData.load_hdf5_analysis(
-                        select_paths[index], int(part_flag[index]), int(read_fail[index]),
-                        unit_id=index,
-                    )
-                    data_modules.append(data_module)
-                data_module = ParserData.contact_data_module(data_modules, unit_id=ID, update_id=True)
-
+            data_module = ParserData.load_hdf5_analysis(
+                getattr(select, "HDF5_PATH"),
+                int(getattr(select, "PART_FLAG")),
+                int(getattr(select, "READ_FAIL")),
+                unit_id=ID,
+            )
             id_module_dict[ID] = data_module
         return select_summary, id_module_dict
 
@@ -299,8 +232,8 @@ class Li(QObject):
         for df_id, module in self.id_module_dict.items():
             data_module_list.append(module)
         self.df_module = ParserData.contact_data_module(data_module_list)
-        self.df_module.prr_df.set_index(["PART_ID"], inplace=True)
-        self.df_module.dtp_df.set_index(["TEST_ID", "PART_ID"], inplace=True)
+        self.df_module.prr_df.set_index(["ID", "PART_ID"], inplace=True)
+        self.df_module.dtp_df.set_index(["TEST_ID", "ID", "PART_ID"], inplace=True)
         self.df_module.prr_df["DA_GROUP"] = "*"
 
     def calculation_top_fail(self):

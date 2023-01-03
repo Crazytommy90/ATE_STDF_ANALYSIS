@@ -152,7 +152,7 @@ class GlobalVariable:
     用来放一些全局变量
     TODO: 以大写作为主要的HEAD
     """
-    DEBUG = False
+    DEBUG = True
     SAVE_PKL = False  # 用来将数据保存到二进制数据中用来做APP测试 TODO: 此版本暂时作废
     SQLITE_PATH = r"D:\1_STDF\stdf_info.db"  # 用于存summary
 

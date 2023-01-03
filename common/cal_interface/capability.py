@@ -20,6 +20,7 @@ from parser_core.stdf_parser_func import PtmdOptFlag, DtpTestFlag, PtmdParmFlag
 class CapabilityUtils:
 
     @staticmethod
+    @Time()
     def top_fail(top_fail_df: pd.DataFrame, data_df: pd.DataFrame) -> (pd.DataFrame, int):
         """
         TODO:
@@ -32,7 +33,7 @@ class CapabilityUtils:
         """
         all_qty = len(top_fail_df)
         temp_data_df = data_df[data_df.index.isin(top_fail_df.index)]
-        fail_df = temp_data_df[temp_data_df.TEST_FLG & DtpTestFlag.TestFailed != 0]
+        fail_df = temp_data_df[temp_data_df.TEST_FLG & DtpTestFlag.TestFailed == DtpTestFlag.TestFailed]
         fail_qty = len(fail_df)
         top_fail_df = top_fail_df[~top_fail_df.index.isin(fail_df.index)]
         if len(top_fail_df) > all_qty:
@@ -57,7 +58,7 @@ class CapabilityUtils:
             " 逐项计算Top Fail "
             df_use_top_fail, fail_qty = CapabilityUtils.top_fail(
                 df_use_top_fail,
-                dtp_df.loc[row.TEST_ID]
+                dtp_df.loc[row.TEST_ID][:]
             )
             try:
                 top_fail_dict[row.TEXT] += fail_qty
@@ -66,6 +67,7 @@ class CapabilityUtils:
         return top_fail_dict
 
     @staticmethod
+    @Time()
     def re_cal_top_fail(ptmd: PtmdModule, top_fail_df: pd.DataFrame, data_df: pd.DataFrame):
         """
         重新计算, 使用ptmd中包含的新的limit信息
@@ -102,6 +104,7 @@ class CapabilityUtils:
         return top_fail_df, fail_qty
 
     @staticmethod
+    @Time()
     def calculation_new_top_fail(df_module: DataModule):
         """
         重新设置limit值后top fail的计算 -> 精度丢失问题, 即使limit没有变化, 算出来的fail rate和上面的函数可能也不一样
@@ -119,7 +122,7 @@ class CapabilityUtils:
             df_use_top_fail, fail_qty = CapabilityUtils.re_cal_top_fail(
                 row,
                 df_use_top_fail,
-                dtp_df.loc[row.TEST_ID]
+                dtp_df.loc[row.TEST_ID][:]
             )
             try:
                 top_fail_dict[row.TEXT] += fail_qty
@@ -242,7 +245,7 @@ class CapabilityUtils:
         """
         capability_key_list = []
         for row in df_module.ptmd_df.itertuples():  # type:PtmdModule
-            data_df = df_module.dtp_df.loc[row.TEST_ID].copy()  # TODO: 10%时间开销
+            data_df = df_module.dtp_df.loc[row.TEST_ID].loc[:].copy()  # TODO: 10%时间开销
             if row.DATAT_TYPE in {DatatType.PTR, DatatType.MPR}:
                 cal_data = CapabilityUtils.calculation_ptr(
                     row, top_fail_dict[row.TEXT], data_df

@@ -69,6 +69,7 @@ class TreeLoadWidget(QWidget, TreeLoadForm):
         self.th.set_summary(self.summary)
         self.th.finished.connect(self.li.update)
         self.progressBar.setMaximum(6)
+        self.pushButton_2.setEnabled(True)
 
     @Slot(QTreeWidgetItem)
     def on_treeWidget_itemChanged(self, e: QTreeWidgetItem):
