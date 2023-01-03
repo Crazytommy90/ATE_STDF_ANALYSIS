@@ -328,11 +328,14 @@ class Li(QObject):
     def background_generation_data_use_to_chart_and_to_save_csv(self):
         """
         将数据叠起来, 用于数据可视化和导出到JMP和Altair
+        TODO: 数据叠加起来的时候, 会做一个去最后出现的重复项目的操作
         :return:
         """
         if self.to_chart_csv_data is None:
             self.to_chart_csv_data = ToChartCsv()
-        temp_result = self.df_module.dtp_df[["RESULT"]].unstack(0).RESULT
+        temp_result = self.df_module.dtp_df[["RESULT"]]
+        temp_result = temp_result[~temp_result.index.duplicated(keep="last")]
+        temp_result = temp_result.unstack(0).RESULT
         self.to_chart_csv_data.df = temp_result
 
     def background_generation_limit_data_use_to_pat(self):
@@ -342,6 +345,7 @@ class Li(QObject):
         :return:
         """
         temp_result = self.df_module.dtp_df[["LO_LIMIT", "HI_LIMIT"]].copy()
+        temp_result = temp_result[~temp_result.index.duplicated(keep="last")]
         self.to_chart_csv_data.limit = temp_result.unstack(0)
 
     def set_chart_data(self, chart_df: Union[pd.DataFrame, None]):

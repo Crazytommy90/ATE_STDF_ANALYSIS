@@ -17,6 +17,7 @@ from PySide2.QtCore import Signal, QObject
 from PySide2.QtGui import QCloseEvent
 from PySide2.QtWidgets import QApplication
 
+from ui_component.ui_common.my_text_browser import UiMessage
 from ui_component.ui_main.ui_main import Application, Main_Ui
 
 import warnings
@@ -44,7 +45,7 @@ class main_ui(Main_Ui):
         self.sd = Stream()
         self.se = Stream()
         self.sd.newText.connect(self.outputWritten)
-        self.se.newText.connect(self.outputWritten)
+        self.se.newText.connect(self.errorWritten)
         sys.stdout = self.sd
         sys.stderr = self.se
 
@@ -55,6 +56,11 @@ class main_ui(Main_Ui):
         :return:
         """
         self.text_browser.split_append(text)
+
+    def errorWritten(self, text: str):
+        self.text_browser.m_append(
+            UiMessage.error(text)
+        )
 
     def closeEvent(self, a0: QCloseEvent) -> None:
         sys.stdout.conn = False
@@ -68,7 +74,9 @@ if __name__ == '__main__':
     """
     import multiprocessing
     from ui_component.ui_app_variable import UiGlobalVariable
+    from common.app_variable import GlobalVariable
 
+    GlobalVariable.init()
     UiGlobalVariable.GraphUseLocalColor = True
     multiprocessing.freeze_support()
     app = Application(sys.argv)

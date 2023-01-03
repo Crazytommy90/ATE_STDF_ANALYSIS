@@ -152,8 +152,6 @@ class BasePlot:
         row = self.li.capability_key_dict.get(self.key, None)
         if row is None: return
         self.unit = row["UNITS"] if not isinstance(row["UNITS"], float) else ""
-        l_limit = row["LO_LIMIT"]
-        h_limit = row["HI_LIMIT"]
         if UiGlobalVariable.GraphScreen == 0:
             l_limit = row["LO_LIMIT"]
             if isinstance(row["LO_LIMIT_TYPE"], float):
@@ -161,9 +159,30 @@ class BasePlot:
             h_limit = row["HI_LIMIT"]
             if isinstance(row["HI_LIMIT_TYPE"], float):
                 h_limit = row["MAX"]
+            self.set_lines(
+                HI_LIMIT=h_limit,
+                LO_LIMIT=l_limit,
+                AVG=row["AVG"],
+            )
+            return
         if UiGlobalVariable.GraphScreen == 1:
             l_limit = row["MIN"]
             h_limit = row["MAX"]
+            self.set_lines(
+                VAILD_MIN=h_limit,
+                VAILD_MAX=l_limit,
+                AVG=row["AVG"],
+            )
+            return
+        if UiGlobalVariable.GraphScreen == 2:
+            l_limit = self.li.to_chart_csv_data.df[self.key].min()
+            h_limit = self.li.to_chart_csv_data.df[self.key].max()
+            self.set_lines(
+                DATA_MIN=h_limit,
+                DATA_MAX=l_limit,
+                AVG=row["AVG"],
+            )
+            return
         if UiGlobalVariable.GraphScreen == 3:
             if row["STD"] == 0 or np.isnan(row["STD"]):
                 l_limit, h_limit = -0.1, 1.1
@@ -171,12 +190,12 @@ class BasePlot:
                 rig_x = row["STD"] * UiGlobalVariable.GraphMeanAddSubSigma
                 l_limit = row["AVG"] - rig_x
                 h_limit = row["AVG"] + rig_x
-
-        self.set_lines(
-            HI_LIMIT=h_limit,
-            LO_LIMIT=l_limit,
-            AVG=row["AVG"],
-        )
+            self.set_lines(
+                SIGMA_MIN=h_limit,
+                SIGMA_MAX=l_limit,
+                AVG=row["AVG"],
+            )
+            return
 
     # @GraphRangeSignal
     def set_range_self(self):
@@ -184,12 +203,8 @@ class BasePlot:
         显示
         :return:
         """
-        if UiGlobalVariable.GraphScreen == 2:
-            return
         row = self.li.capability_key_dict.get(self.key, None)
         if row is None: return
-        if UiGlobalVariable.GraphScreen == 1:
-            self.set_p_range(row["MIN"], row["MAX"])
         if UiGlobalVariable.GraphScreen == 0:
             l_limit = row["LO_LIMIT"]
             if isinstance(row["LO_LIMIT_TYPE"], float):
@@ -199,6 +214,15 @@ class BasePlot:
                 h_limit = row["MAX"]
             step = row["STD"] * 2
             self.set_p_range(l_limit - step, h_limit + step)
+            return
+        if UiGlobalVariable.GraphScreen == 1:
+            self.set_p_range(row["MIN"], row["MAX"])
+            return
+        if UiGlobalVariable.GraphScreen == 2:
+            low = self.li.to_chart_csv_data.df[self.key].min()
+            high = self.li.to_chart_csv_data.df[self.key].max()
+            self.set_p_range(low, high)
+            return
         if UiGlobalVariable.GraphScreen == 3:
             if row["STD"] == 0 or np.isnan(row["STD"]):
                 l_limit, h_limit = -0.1, 1.1
@@ -206,6 +230,7 @@ class BasePlot:
                 step = row["STD"] * self.li.rig
                 l_limit, h_limit = row["AVG"] - step, row["AVG"] + step
             self.set_p_range(l_limit, h_limit)
+            return
 
     def set_p_range(self, p_min, p_max):
         if self.sig == 1:
