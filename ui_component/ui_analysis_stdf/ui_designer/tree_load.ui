@@ -39,7 +39,7 @@
      <item>
       <widget class="QPushButton" name="pushButton_2">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <property name="text">
         <string>数据合并(多份数据组合为自定义lot)</string>

@@ -42,7 +42,7 @@ class Ui_Form(object):
 
         self.pushButton_2 = QPushButton(Form)
         self.pushButton_2.setObjectName(u"pushButton_2")
-        self.pushButton_2.setEnabled(False)
+        self.pushButton_2.setEnabled(True)
 
         self.horizontalLayout.addWidget(self.pushButton_2)
 

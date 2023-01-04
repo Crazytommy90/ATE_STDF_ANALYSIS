@@ -188,8 +188,8 @@ class CapabilityUtils:
             "FAIL_RATE": round(top_fail_qty / len(data_df) * 100, 3),
             "REJECT_QTY": reject_qty,
             "REJECT_RATE": round(reject_qty / len(data_df) * 100, 3),
-            "MIN": data_min,  # 注意, 是取得有效区域的数据
-            "MAX": data_max,  # 注意, 是取得有效区域的数据
+            "MIN": round(data_min, 6),  # 注意, 是取得有效区域的数据
+            "MAX": round(data_max, 6),  # 注意, 是取得有效区域的数据
             "LO_LIMIT_TYPE": l_limit_type,
             "HI_LIMIT_TYPE": h_limit_type,
         }

@@ -66,10 +66,12 @@ class DataGroupWidget(QWidget, Ui_Form):
             self.da_group_item_list.appendRow(item)
 
     def init_listView_3(self):
-        self.group_data_list.itemChanged.disconnect(self.group_data_changed)
-        self.group_data_list.clear()
+        if self.li.to_chart_csv_data is None:
+            return
         if self.li.to_chart_csv_data.group_df is None:
             return
+        self.group_data_list.itemChanged.disconnect(self.group_data_changed)
+        self.group_data_list.clear()
         for key in self.li.to_chart_csv_data.group_df.keys():
             item = QStandardItem(key)
             item.setCheckState(Qt.Checked)
