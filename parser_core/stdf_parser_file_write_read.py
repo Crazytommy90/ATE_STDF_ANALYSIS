@@ -146,7 +146,7 @@ class ParserData:
         return df
 
     @staticmethod
-    def load_hdf5_test(file_path: str) -> Union[DataModule, None]:
+    def load_hdf5_test(file_path: str, ID:int=1) -> Union[DataModule, None]:
         """
         TODO: only be use to unit test
         :param file_path:
@@ -158,9 +158,9 @@ class ParserData:
             ptmd_df = pd.read_hdf(file_path, key="ptmd_df")
             if not isinstance(prr_df, Df) or not isinstance(dtp_df, Df) or not isinstance(ptmd_df, Df):
                 return
-            prr_df.insert(0, column="ID", value=1)
-            dtp_df.insert(0, column="ID", value=1)
-            ptmd_df.insert(0, column="ID", value=1)
+            prr_df.insert(0, column="ID", value=ID)
+            dtp_df.insert(0, column="ID", value=ID)
+            ptmd_df.insert(0, column="ID", value=ID)
             prr_df["SITE_NUM"] = prr_df["SITE_NUM"].apply(lambda x: 'S{:0>3d}'.format(x))
             ptmd_df["TEXT"] = ptmd_df["TEST_NUM"].astype(str) + ":" + ptmd_df["TEST_TXT"]
             return DataModule(prr_df=prr_df, dtp_df=dtp_df, ptmd_df=ptmd_df)
@@ -185,14 +185,20 @@ class ParserData:
         prr_df.insert(0, column="ID", value=unit_id)
         dtp_df.insert(0, column="ID", value=unit_id)
         ptmd_df.insert(0, column="ID", value=unit_id)
-        # add_data = get_part_id_add()  # TODO: MIN:0xFFFFFF
-        # prr_df["PART_ID"] = prr_df["PART_ID"] + add_data
-        # dtp_df["PART_ID"] = dtp_df["PART_ID"] + add_data
         prr_df["SITE_NUM"] = prr_df["SITE_NUM"].apply(lambda x: 'S{:0>3d}'.format(x))
         ptmd_df["TEXT"] = ptmd_df["TEST_NUM"].astype(str) + ":" + ptmd_df["TEST_TXT"]
         prr_df = ParserData.get_prr_data(prr_df, part_flag, read_fail)
         dtp_df = dtp_df[dtp_df.PART_ID.isin(prr_df.PART_ID)]
         return DataModule(prr_df=prr_df, dtp_df=dtp_df, ptmd_df=ptmd_df)
+
+    @staticmethod
+    @Time()
+    def contact_with_unstack_data_module(args: List[DataModule]):
+        """
+        使用group, 先将数据处置妥当后再设置index
+        :param args:
+        :return:
+        """
 
     @staticmethod
     @Time()

@@ -18,20 +18,8 @@ import pandas as pd
 from ui_component.ui_common.my_text_browser import Print
 
 from threading import Lock
+
 lock = Lock()
-
-PART_ID_ADD = 0
-
-
-def get_part_id_add():
-    """
-    TODO: > 0xFFFFFF
-    :return:
-    """
-    with lock:
-        global PART_ID_ADD
-        PART_ID_ADD += 1
-        return PART_ID_ADD << 24
 
 
 def qt_catch_except(func):

@@ -46,9 +46,10 @@ class Hdf5DataLoad:
         """
         if self.load:
             return
-        self.df_module = ParserData.load_hdf5_test(TestVar.HDF5_PATH)
-        self.df_module.prr_df.set_index(["PART_ID"], inplace=True)
-        self.df_module.dtp_df.set_index(["TEST_ID", "PART_ID"], inplace=True)
+        ID = 1
+        self.df_module = ParserData.load_hdf5_test(TestVar.HDF5_PATH, ID)
+        self.df_module.prr_df.set_index(["ID", "PART_ID"], inplace=True)
+        self.df_module.dtp_df.set_index(["TEST_ID", "ID", "PART_ID"], inplace=True)
         if self.df_module is None:
             raise Exception("ParserData.load_hdf5 fail!")
         self.summary = SummaryCore()
@@ -57,7 +58,7 @@ class Hdf5DataLoad:
             {
                 "FILE_PATH": "DEMO",
                 "FILE_NAME": "DEMO",
-                "ID": 1,
+                "ID": ID,
                 "LOT_ID": "DEMO",
                 "SBLOT_ID": "DEMO",
                 "WAFER_ID": "WAFER",
@@ -78,4 +79,5 @@ class Hdf5DataLoad:
             }
         ]
         self.summary.set_data(summary_list)
+        self.li.set_data(*self.summary.load_select_data([1]))
         self.load = True
