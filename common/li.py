@@ -214,6 +214,21 @@ class Li(QObject):
         self.select_summary["GROUP"] = "*"
         self.id_module_dict = id_module_dict
 
+    def unstack(self):
+        """
+        TODO: 20230103 主要数据模型改为堆叠模式, 之后再沿用旧的数据模型, 直接尝试用解析的数据模型速度过于缓慢了
+            1. 将数据改为堆叠模式
+                Result
+                TEST_FLG
+                HI/LO_LIMIT
+            2. 用于数据计算
+        :return:
+        """
+        if len(self.id_module_dict) == 0:
+            return
+        for df_id, module in self.id_module_dict.items():
+            continue
+
     def concat(self):
         """
         TODO:
@@ -379,45 +394,6 @@ class Li(QObject):
         df = df.reset_index().rename(columns=name_dict)
         return df, calculation_capability
 
-    def get_unit_data_by_group_key(self, group_key: str, da_group_key: str) -> pd.DataFrame:
-        """
-        通过group_key来获取细分的unit_data prr, 用于绘图或是计算
-        TODO: 禁止修改
-        :param group_key:
-        :param da_group_key:
-        :return:
-        """
-        unit_summary = self.select_summary[self.select_summary.GROUP == group_key]
-        unit_prr = self.df_module.prr_df[
-            (self.df_module.prr_df.ID.isin(unit_summary.ID)) & (self.df_module.prr_df.DA_GROUP == da_group_key)
-            ]
-        return unit_prr
-
-    def get_chart_data_by_group_key(self, group_key: str, da_group_key: str) -> pd.DataFrame:
-        """
-        通过group_key来获取细分的unit_data prr, 用于绘图或是计算
-        TODO: 禁止修改
-        :param group_key:
-        :param da_group_key:
-        :return:
-        """
-        unit_summary = self.select_summary[self.select_summary.GROUP == group_key]
-        unit_prr = self.df_module.chart_prr[
-            (self.df_module.chart_prr.ID.isin(unit_summary.ID)) & (self.df_module.chart_prr.DA_GROUP == da_group_key)
-            ]
-        return unit_prr
-
-    @Time()
-    def get_unit_data_by_test_id(self, unit_prr: pd.DataFrame, test_id: int) -> pd.DataFrame:
-        """
-        TODO: 根据全局唯一的TEST_ID来获取测试数据(时间过长了) 时间开销20mS
-        :param unit_prr:
-        :param test_id:
-        :return:
-        """
-        unit_dtp_df = self.df_module.dtp_df.loc[test_id]
-        return unit_dtp_df[unit_dtp_df.index.isin(unit_prr.index)]
-
     def calculation_group(self, group_params: Union[list, None], da_group_params: Union[list, None]):
         """
         分组的制程能力报表
@@ -480,7 +456,7 @@ class Li(QObject):
         p.start()
         # OpenXl.excel_limit_run(self.select_summary, self.df_module.ptmd_df)
 
-    def get_text_by_test_id(self, test_id:int):
+    def get_text_by_test_id(self, test_id: int):
         row = self.capability_key_dict[test_id]
         return str(row["TEST_NUM"]) + ":" + row["TEST_TXT"]
 

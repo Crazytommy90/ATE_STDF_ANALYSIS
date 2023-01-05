@@ -114,7 +114,21 @@ class DataModule:
     prr_df: pd.DataFrame = None
     dtp_df: pd.DataFrame = None  # 数据
     ptmd_df: pd.DataFrame = None  # 测试项目相关
-    chart_prr: pd.DataFrame = None  # prr_df的copy, 用于绘制前台的chart
+
+
+@dataclass
+class UnStackModule:
+    """
+    unstack数据
+    """
+    # TODO: Must
+    df: pd.DataFrame = None
+    group_df: Dict[str, pd.DataFrame] = None
+    # TODO: Must
+    test_flg: pd.DataFrame = None
+    group_flg: Dict[str, pd.DataFrame] = None
+    # TODO: Optional PAT
+    limit: pd.DataFrame = None
 
 
 class DatatType:
@@ -129,13 +143,13 @@ class FailFlag:
 
 
 class LimitType:
-    NoHighLimit = nan
-    EqualHighLimit = "<="
-    ThenHighLimit = "<"
+    NoHighLimit = "NA"
+    EqualHighLimit = "LE"
+    ThenHighLimit = "LT"
 
-    NoLowLimit = nan
-    EqualLowLimit = ">="
-    ThenLowLimit = ">"
+    NoLowLimit = "NA"
+    EqualLowLimit = "GE"
+    ThenLowLimit = "GT"
 
 
 class PartFlags:

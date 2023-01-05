@@ -167,12 +167,12 @@ class CapabilityUtils:
                          (data_mean - ptmd.LO_LIMIT) / (3 * data_std)]), 6)
         l_limit_type = LimitType.ThenLowLimit
         if ptmd.OPT_FLAG & PtmdOptFlag.NoLowLimit:
-            l_limit_type = np.nan
+            l_limit_type = LimitType.NoLowLimit
         if ptmd.PARM_FLG & PtmdParmFlag.EqualLowLimit:
             l_limit_type = LimitType.EqualLowLimit
         h_limit_type = LimitType.ThenHighLimit
         if ptmd.OPT_FLAG & PtmdOptFlag.NoHighLimit:
-            h_limit_type = np.nan
+            h_limit_type = LimitType.NoHighLimit
         if ptmd.PARM_FLG & PtmdParmFlag.EqualHighLimit:
             h_limit_type = LimitType.EqualHighLimit
         temp_dict = {

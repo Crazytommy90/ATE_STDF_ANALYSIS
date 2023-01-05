@@ -115,17 +115,6 @@ class QtGraphPlotCase(unittest.TestCase, Hdf5DataLoad):
         exec_time=True,
         skip_args_time=True,
     )
-    def test_get_test_id_data(self):
-        unit_prr = self.li.get_unit_data_by_group_key('DEMO|DEMO', 'S012')
-        unit_dtp_df = self.li.get_unit_data_by_test_id(unit_prr, 1)
-        print(self.li.capability_key_dict[1])
-        return unit_dtp_df
-
-    @Tester(
-        ["test_get_test_id_data"],
-        exec_time=True,
-        skip_args_time=True,
-    )
     def test_scatter_plot(self, **kwargs):
         """
         good
