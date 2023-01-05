@@ -75,7 +75,7 @@ class TransScatterChart(UnitChartWindow, BasePlot):
 
     def init_movable_line(self):
         v_line = InfiniteLine(angle=90, movable=False, label='x={value:0.0f}', labelOpts={'color': (0, 0, 0)})
-        h_line = InfiniteLine(angle=0, movable=False, label='y={value:0.5f}', labelOpts={'color': (0, 0, 0)})
+        h_line = InfiniteLine(angle=0, movable=False, label='y={value:0.9f}', labelOpts={'color': (0, 0, 0)})
         self.vb.addItem(v_line, ignoreBounds=True)
         self.vb.addItem(h_line, ignoreBounds=True)
 

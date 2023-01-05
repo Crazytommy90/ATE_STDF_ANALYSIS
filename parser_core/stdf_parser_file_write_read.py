@@ -16,7 +16,6 @@ from pandas import DataFrame as Df
 from app_test.test_utils.wrapper_utils import Time
 from common.app_variable import TestVariable as TestVar, DataModule, GlobalVariable as GloVar, PtmdModule, TestVariable, \
     PartFlags, FailFlag
-from common.func import get_part_id_add
 from parser_core.stdf_parser_func import PrrPartFlag
 
 
