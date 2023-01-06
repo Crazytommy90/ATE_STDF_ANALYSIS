@@ -28,6 +28,15 @@ class PauseTableWidget(TableWidget):
 
         self.contextMenu.addAction(translate("PauseTableWidget", 'Paste')).triggered.connect(self.paste)
 
+    q_font = QFont("", 8)
+
+    def setData(self, data):
+        self.setAlternatingRowColors(True)
+        self.q_font.setBold(True)
+        self.horizontalHeader().setFont(self.q_font)
+        self.setFont(self.q_font)
+        super(PauseTableWidget, self).setData(data)
+
     def get_select_row_set(self, column: int) -> Union[None, set]:
         selection = self.selectedRanges()
         if not selection:
