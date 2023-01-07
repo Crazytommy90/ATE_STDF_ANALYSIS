@@ -41,7 +41,7 @@ class RunStdfAnalysis(QThread):
         self.file_list = file_list
 
     def set_id(self, mid_nm):
-        self.id = int(mid_nm * 1E5)
+        self.id = int(mid_nm * 1000)
 
     def run(self) -> None:
         if self.file_list is None:

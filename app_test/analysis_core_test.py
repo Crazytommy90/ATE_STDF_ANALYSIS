@@ -26,7 +26,12 @@ class ReadHdf5BaseAnalysisCase(unittest.TestCase, Hdf5DataLoad):
     query占用的时间比较长,尽量不要用,快速验证可以用
     DA_GROUP
     TODO: 单个数据单元的测试, UI中组合的会复杂一些
+        @20230107:
+            1. 先转为通用格式
+            2. 每个子数据使用unstack进行转置
+            3. 更新最新的列名
     """
+    top_fail_dict = None
 
     @Tester(
         ["load_data"],
@@ -37,33 +42,22 @@ class ReadHdf5BaseAnalysisCase(unittest.TestCase, Hdf5DataLoad):
         测试Read Hdf5数据
         :return:
         """
-        self.assertEqual(True, self.load)
-        print(self.df_module.prr_df)
+        select_summary, id_module_dict = self.summary.load_select_data([1, 2])
+        self.li.set_data(select_summary, id_module_dict)
+        self.li.concat()
 
     @Tester(
         ["load_data"],
         exec_time=True,
     )
-    def test_prr_add_id(self):
-        """
-        测试给Prr数据插入一个ID,用于识别这个文件的数据
-        :return:
-        """
-        self.df_module.prr_df.insert(loc=0, column='ID', value=1001)
-        print(self.df_module.prr_df)
-
-    @Tester(
-        ["load_data"],
-        exec_time=True,
-    )
-    def test_print_test_flow(self):
+    def test_print_base_data(self):
         """
 
         :return:
         """
 
         " 测试能否根据 TEST_ID/测试项目 这个测试项目的所有数据 "
-        df = self.df_module.dtp_df.loc[1]
+        df = self.df_module.dtp_df[self.df_module.dtp_df.TEST_ID == 1]
         print(df)
 
         " 测试是否可以识别测试数据的Only Pass "
@@ -96,16 +90,16 @@ class ReadHdf5BaseAnalysisCase(unittest.TestCase, Hdf5DataLoad):
 
         all_qty = pass_qty + fail_qty
         Print.success("AllQty:{}".format(all_qty))
-        self.assertEqual(all_qty, len(df))
 
         " 测试数据是否可以被解析为动态PAT "
         if len(df) != len(df[df.OPT_FLAG & DtpOptFlag.PatValid == DtpOptFlag.PatValid]):
             Print.warning("No Pat Data")
         else:
             Print.success("Can Get Pat Data")
+        return True
 
     @Tester(
-        ["load_data"],
+        ["test_load_data"],
         exec_time=True,
     )
     def test_print_first_re_finally_test(self):
@@ -138,7 +132,7 @@ class ReadHdf5BaseAnalysisCase(unittest.TestCase, Hdf5DataLoad):
         self.assertEqual(len(first_df), len(finally_df))
 
     @Tester(
-        ["load_data"],
+        ["test_load_data"],
         exec_time=True,
         skip_args_time=True,
     )
@@ -148,14 +142,12 @@ class ReadHdf5BaseAnalysisCase(unittest.TestCase, Hdf5DataLoad):
         Example Data: Chroma, TTK(NI TestStand@), STS(NI TestStand@)
         :return:
         """
-        df1 = self.df_module.prr_df[["X_COORD", "Y_COORD"]].groupby(["X_COORD", "Y_COORD"]).last()
-        print(len(df1))
-        df = self.df_module.prr_df[self.df_module.prr_df.index.isin(df1.index)]
-        print(df)
+        df1 = self.df_module.prr_df[["DIE_ID", "X_COORD", "Y_COORD"]].groupby(["X_COORD", "Y_COORD"]).last()
+        df = self.df_module.prr_df[self.df_module.prr_df.DIE_ID.isin(df1.DIE_ID)]
         Print.success("FinallyTestQty:{}".format(len(df)))
 
     @Tester(
-        ["load_data"],
+        ["test_load_data"],
         exec_time=True,
         skip_args_time=True,
     )
@@ -165,13 +157,12 @@ class ReadHdf5BaseAnalysisCase(unittest.TestCase, Hdf5DataLoad):
         query占用的时间比较长,尽量不要用
         :return:
         """
-        if len(self.df_module.prr_df) == 0:
-            Print.danger("No Prr Data!")
-            self.assertEqual(1, 0)
-        return CapabilityUtils.calculation_top_fail(self.df_module)
+        self.top_fail_dict = CapabilityUtils.calculation_top_fail(self.li.df_module)
+        for key, value in self.top_fail_dict.items():
+            print(key, value, sep=" : ")
 
     @Tester(
-        ["load_data"],
+        ["test_load_data"],
         exec_time=True,
         skip_args_time=True,
     )
@@ -181,19 +172,19 @@ class ReadHdf5BaseAnalysisCase(unittest.TestCase, Hdf5DataLoad):
         运行时间肯定会长了一些 -> 实际和上面的操作时间一致? 上面的操作应该会更加简单和速度的.
         :return:
         """
-        if len(self.df_module.prr_df) == 0:
+        if len(self.li.df_module.prr_df) == 0:
             Print.danger("No Prr Data!")
             self.assertEqual(1, 0)
-        top_fail_dict = CapabilityUtils.calculation_new_top_fail(self.df_module)
-        for key, value in top_fail_dict.items():
+        self.top_fail_dict = CapabilityUtils.calculation_new_top_fail(self.li.df_module)
+        for key, value in self.top_fail_dict.items():
             print(key, value, sep=" : ")
 
     @Tester(
-        ["load_data", "test_calculation_top_fail"],
+        ["test_load_data", "test_calculation_top_fail"],
         exec_time=True,
         skip_args_time=True,
     )
-    def test_calculation_capability(self, **kwargs):
+    def test_calculation_capability(self):
         """
         计算制程能力并优化这个逻辑的执行时间, 计算时间保持在 100k row, 200 column -> 1s之内
         数据量到达什么级别就用多线程?
@@ -205,12 +196,11 @@ class ReadHdf5BaseAnalysisCase(unittest.TestCase, Hdf5DataLoad):
             Print.danger("No Prr Data!")
             self.assertEqual(1, 0)
 
-        top_fail_dict: dict = kwargs.get("test_calculation_top_fail")
-        if top_fail_dict is None:
+        if self.top_fail_dict is None:
             print("top fail is None")
             return
 
-        capability_key_list = CapabilityUtils.calculation_capability(self.df_module, top_fail_dict)
+        capability_key_list = CapabilityUtils.calculation_capability(self.df_module, self.top_fail_dict)
         Print.print_table(capability_key_list)
 
         with open(TestVariable.TABLE_PICKLE_PATH, 'wb') as file_obj:

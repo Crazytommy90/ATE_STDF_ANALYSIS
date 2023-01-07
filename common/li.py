@@ -7,8 +7,7 @@
 @Time    : 2022/12/23 20:35
 @Mark    : 
 """
-import os
-import time
+
 from multiprocessing import Process
 from typing import List, Dict, Union, Tuple
 
@@ -16,7 +15,7 @@ import pandas as pd
 from PySide2.QtCore import QObject, Signal
 
 from app_test.test_utils.wrapper_utils import Time
-from common.app_variable import DataModule, PtmdModule, ToChartCsv, GlobalVariable
+from common.app_variable import DataModule, ToChartCsv, GlobalVariable
 from common.cal_interface.capability import CapabilityUtils
 from parser_core.stdf_parser_file_write_read import ParserData
 from report_core.openxl_utils.utils import OpenXl
@@ -214,21 +213,6 @@ class Li(QObject):
         self.select_summary["GROUP"] = "*"
         self.id_module_dict = id_module_dict
 
-    def unstack(self):
-        """
-        TODO: 20230103 主要数据模型改为堆叠模式, 之后再沿用旧的数据模型, 直接尝试用解析的数据模型速度过于缓慢了
-            1. 将数据改为堆叠模式
-                Result
-                TEST_FLG
-                HI/LO_LIMIT
-            2. 用于数据计算
-        :return:
-        """
-        if len(self.id_module_dict) == 0:
-            return
-        for df_id, module in self.id_module_dict.items():
-            continue
-
     def concat(self):
         """
         TODO:
@@ -247,13 +231,15 @@ class Li(QObject):
         for df_id, module in self.id_module_dict.items():
             data_module_list.append(module)
         self.df_module = ParserData.contact_data_module(data_module_list)
-        self.df_module.prr_df.set_index(["ID", "PART_ID"], inplace=True)
-        self.df_module.dtp_df.set_index(["TEST_ID", "ID", "PART_ID"], inplace=True)
+        self.df_module.prr_df.set_index(["DIE_ID"], inplace=True)
+        self.df_module.dtp_df.set_index(["TEST_ID", "DIE_ID"], inplace=True)
         self.df_module.prr_df["DA_GROUP"] = "*"
 
     def calculation_top_fail(self):
         """
         1. 计算top fail
+        2. 需要在unstack的数据格式上
+        3. 根据选取的数据来做计算
         :return:
         """
         self.top_fail_dict = CapabilityUtils.calculation_top_fail(self.df_module)
@@ -381,17 +367,15 @@ class Li(QObject):
         calculation_capability = {}
         for test_id in test_id_list:
             row = self.capability_key_dict[test_id]
-            text = str(row["TEST_NUM"]) + ":" + row["TEST_TXT"]
-            name_dict[test_id] = text
-            calculation_capability[text] = row
+            name_dict[test_id] = row["TEXT"]
+            calculation_capability[row["TEXT"]] = row
         # rename -> key_id rename text
-        name_dict["index"] = "PART_ID"
         df = df[GlobalVariable.JMP_SCRIPT_HEAD + test_id_list].copy()
         # {group}@{da_group}
         df["ALL_GROUP"] = df["GROUP"] + "@" + df["DA_GROUP"]
         if self.to_chart_csv_data.select_group is not None:
             df = df[df.ALL_GROUP.isin(self.to_chart_csv_data.select_group)]
-        df = df.reset_index().rename(columns=name_dict)
+        df = df.rename(columns=name_dict)
         return df, calculation_capability
 
     def calculation_group(self, group_params: Union[list, None], da_group_params: Union[list, None]):
@@ -458,7 +442,7 @@ class Li(QObject):
 
     def get_text_by_test_id(self, test_id: int):
         row = self.capability_key_dict[test_id]
-        return str(row["TEST_NUM"]) + ":" + row["TEST_TXT"]
+        return row["TEXT"]
 
     def update(self):
         """

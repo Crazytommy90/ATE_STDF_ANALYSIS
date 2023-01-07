@@ -103,7 +103,7 @@ class TransScatterChart(UnitChartWindow, BasePlot):
             result_min, result_max = ax.top(), ax.bottom()
             temp = self.li.to_chart_csv_data.df
             chart_prr = temp[
-                ((temp.index > part_id_min) & (temp.index < part_id_max)) & (
+                ((temp.PART_ID > part_id_min) & (temp.PART_ID < part_id_max)) & (
                         (temp[self.key] > result_min) & (temp[self.key] < result_max))
                 ]
             chart_prr_list.append(chart_prr)
@@ -147,11 +147,11 @@ class TransScatterChart(UnitChartWindow, BasePlot):
                     continue
             idx = int(index % color_split_nm)
             if UiGlobalVariable.GraphPlotScatterSimple:
-                x = np.array(df.index)
+                x = df.PART_ID
                 x = x[::self.list_bins + 1]
                 result = df[self.key][::self.list_bins + 1]
             else:
-                x = np.array(df.index)
+                x = df.PART_ID
                 result = df[self.key]
             brush = list(color_list[idx])
             if self.li.to_chart_csv_data.chart_df is None:
@@ -198,11 +198,11 @@ class TransScatterChart(UnitChartWindow, BasePlot):
             if len(df) == 0:
                 continue
             if UiGlobalVariable.GraphPlotScatterSimple:
-                x = np.array(df.index)  # & 0XFFFFFF
+                x = df.PART_ID
                 x = x[::self.list_bins + 1]
                 result = df[self.key][::self.list_bins + 1]
             else:
-                x = np.array(df.index)  # & 0XFFFFFF
+                x = df.PART_ID
                 result = df[self.key]
             brush = self.brush_cache[key]
             if index >= len(self.scatter_front_list):

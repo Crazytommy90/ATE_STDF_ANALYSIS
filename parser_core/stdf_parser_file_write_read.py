@@ -8,15 +8,16 @@
 @Mark    : 
 """
 import os
-from typing import Union, List
+from typing import Union, List, ValuesView
 
 import pandas as pd
+import numpy as np
 from pandas import DataFrame as Df
 
 from app_test.test_utils.wrapper_utils import Time
 from common.app_variable import TestVariable as TestVar, DataModule, GlobalVariable as GloVar, PtmdModule, TestVariable, \
     PartFlags, FailFlag
-from parser_core.stdf_parser_func import PrrPartFlag
+from parser_core.stdf_parser_func import PrrPartFlag, DtpTestFlag
 
 
 class ParserData:
@@ -114,8 +115,8 @@ class ParserData:
             first_pass_df = first_df[first_df.FAIL_FLAG == FailFlag.PASS]
             df = pd.concat([first_pass_df, retest_df])
         if part_flag == PartFlags.XY_COORD:
-            df1 = df[["PART_ID", "X_COORD", "Y_COORD"]].groupby(["X_COORD", "Y_COORD"]).last()
-            df = df[df.PART_ID.isin(df1.PART_ID)]
+            df1 = df[["DIE_ID", "X_COORD", "Y_COORD"]].groupby(["X_COORD", "Y_COORD"]).last()
+            df = df[df.DIE_ID.isin(df1.DIE_ID)]
         return df
 
     @staticmethod
@@ -145,28 +146,6 @@ class ParserData:
         return df
 
     @staticmethod
-    def load_hdf5_test(file_path: str, ID:int=1) -> Union[DataModule, None]:
-        """
-        TODO: only be use to unit test
-        :param file_path:
-        :return:
-        """
-        try:
-            prr_df = pd.read_hdf(file_path, key="prr_df")
-            dtp_df = pd.read_hdf(file_path, key="dtp_df")
-            ptmd_df = pd.read_hdf(file_path, key="ptmd_df")
-            if not isinstance(prr_df, Df) or not isinstance(dtp_df, Df) or not isinstance(ptmd_df, Df):
-                return
-            prr_df.insert(0, column="ID", value=ID)
-            dtp_df.insert(0, column="ID", value=ID)
-            ptmd_df.insert(0, column="ID", value=ID)
-            prr_df["SITE_NUM"] = prr_df["SITE_NUM"].apply(lambda x: 'S{:0>3d}'.format(x))
-            ptmd_df["TEXT"] = ptmd_df["TEST_NUM"].astype(str) + ":" + ptmd_df["TEST_TXT"]
-            return DataModule(prr_df=prr_df, dtp_df=dtp_df, ptmd_df=ptmd_df)
-        except Exception as err:
-            print(err)
-
-    @staticmethod
     @Time()
     def load_hdf5_analysis(file_path: str, part_flag: int, read_fail: int, unit_id: int) -> DataModule:
         """
@@ -174,6 +153,7 @@ class ParserData:
         TODO:
             ID是文件的ID, 用来区分多个STDF的
             ptmd_df需要被用来做多个文件间的limit对比
+            只要想办法让每颗DIE的DIE_ID不同既可以安心的做数据分析处理了
         :return: 在tree中处理并返回
         """
         prr_df = pd.read_hdf(file_path, key="prr_df")
@@ -184,29 +164,80 @@ class ParserData:
         prr_df.insert(0, column="ID", value=unit_id)
         dtp_df.insert(0, column="ID", value=unit_id)
         ptmd_df.insert(0, column="ID", value=unit_id)
+
+        prr_df["DIE_ID"] = prr_df["PART_ID"] + unit_id * 1000000
         prr_df["SITE_NUM"] = prr_df["SITE_NUM"].apply(lambda x: 'S{:0>3d}'.format(x))
+        # TODO: TEXT看情况是否需要TEST_NUM
         ptmd_df["TEXT"] = ptmd_df["TEST_NUM"].astype(str) + ":" + ptmd_df["TEST_TXT"]
         prr_df = ParserData.get_prr_data(prr_df, part_flag, read_fail)
+
+        dtp_df["DIE_ID"] = dtp_df["PART_ID"] + unit_id * 1000000
         dtp_df = dtp_df[dtp_df.PART_ID.isin(prr_df.PART_ID)]
+        temp_fail_exec = dtp_df.TEST_FLG & DtpTestFlag.TestFailed == DtpTestFlag.TestFailed
+        temp_fail = dtp_df[temp_fail_exec].copy()
+        temp_pass = dtp_df[~temp_fail_exec].copy()
+        temp_pass["FAIL_FLG"] = FailFlag.PASS
+        temp_fail["FAIL_FLG"] = FailFlag.FAIL
+        dtp_df = pd.concat([temp_pass, temp_fail])
+        dtp_df["FAIL_FLG"] = dtp_df["FAIL_FLG"].astype(np.uint8)
+
         return DataModule(prr_df=prr_df, dtp_df=dtp_df, ptmd_df=ptmd_df)
 
-    @staticmethod
-    @Time()
-    def contact_with_unstack_data_module(args: List[DataModule]):
-        """
-        使用group, 先将数据处置妥当后再设置index
-        :param args:
-        :return:
-        """
+    # @staticmethod
+    # def contact_with_unstack_data_module(args: ValuesView[DataModule]):
+    #     """
+    #     先做数据叠加, 时间耗费较长
+    #     TODO:
+    #         流程:
+    #         1. 首先可以先用contact_data_module的模型, 生成一个唯一的DataModule
+    #         2. 使用这个DataModule生成UnStackModule
+    #         3. 计算top fail等
+    #         问题:
+    #         1. unstack数据中会有较多的NAN, top fail和 fail rate计算需要注意
+    #         2. 如果是limit更新后的数据, 计算起来也会比较麻烦
+    #     :param args:
+    #     :return:
+    #     """
+    #     df_module = ParserData.contact_data_module(list(args))
+    #     df_module.prr_df.set_index(["DIE_ID"], inplace=True)
+    #     df_module.dtp_df.set_index(["TEST_ID", "DIE_ID"], inplace=True)
+    #     df_module.prr_df["DA_GROUP"] = "*"
+    #     unstack_module = UnStackModule()
+    #     # 0.194
+    #     temp_result = df_module.dtp_df[["RESULT"]].copy()
+    #     temp_need_index = ~temp_result.index.duplicated(keep="last")
+    #     temp_result = temp_result[temp_need_index]  # 如果是同一个测试项目, 则取出最后一次测试值
+    #     temp_result = temp_result.unstack(0).RESULT
+    #     # 1.152
+    #     temp_test_flg = df_module.dtp_df[["TEST_FLG"]]
+    #     temp_test_flg = temp_test_flg[temp_need_index]
+    #     temp_fail_exec = temp_test_flg.TEST_FLG & DtpTestFlag.TestFailed == DtpTestFlag.TestFailed
+    #     # 1.153
+    #     temp_fail = temp_test_flg[temp_fail_exec].copy()
+    #     temp_pass = temp_test_flg[~temp_fail_exec].copy()
+    #     temp_pass["TEST_FLG"] = 1
+    #     temp_fail["TEST_FLG"] = 0
+    #     temp_test_flg = pd.concat([temp_pass, temp_fail])
+    #     temp_test_flg["TEST_FLG"] = temp_test_flg["TEST_FLG"].astype(np.uint8)
+    #     df_module.
+    #     # temp_test_flg = temp_test_flg.unstack(0).TEST_FLG
+    #
+    #     unstack_module.prr_df = df_module.prr_df
+    #     unstack_module.df = temp_result
+    #     # unstack_module.test_flg = temp_test_flg
+    #
+    #     # print(unstack_module.df)
+    #     # print(unstack_module.test_flg)
+    #     # 2.28
+    #
+    #     return df_module, unstack_module
 
     @staticmethod
     @Time()
-    def contact_data_module(args: List[DataModule], unit_id: int = 0, update_id: bool = False):
+    def contact_data_module(args: List[DataModule]):
         """
         关键函数, 将多份的数据组合起来, 特别是不同程序的数据, 并将所有的TEST_ID重新分配, 按照 TEST_NUM:TEST_TXT 来分配唯一TEST_ID
         TODO: ID也是用来和Summary链接的桥梁
-        :param update_id: 是否更新ID
-        :param unit_id: 更新的ID
         :param args:
         :return:
         """
@@ -247,12 +278,6 @@ class ParserData:
         ptmd_df = pd.DataFrame(ptmd_dict.values())
         for k, v in GloVar.PTMD_TYPE_DICT.items():
             ptmd_df[k] = ptmd_df[k].astype(v)
-
         ptmd_df["TEST_ID"] = ptmd_dict.keys()
         dtp_df = pd.concat(new_dtps)
-        if update_id:
-            # TODO: 组合为新的ID,确认是否需要重建PART_ID的顺序? -> 20221225 待定, 不重建PART_ID也能用
-            prr_df["ID"] = unit_id
-            dtp_df["ID"] = unit_id
-            ptmd_df["ID"] = unit_id
         return DataModule(prr_df=prr_df, dtp_df=dtp_df, ptmd_df=ptmd_df)

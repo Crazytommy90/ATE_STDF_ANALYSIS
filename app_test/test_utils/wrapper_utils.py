@@ -50,7 +50,11 @@ class Tester:
                         kwargs[per_func_name] = res
             if self.skip_args_time:
                 start = time.perf_counter()
+            # try:
             res = func(ctx, **kwargs)
+            # except Exception as err:
+            #     Print.danger(str(err))
+            #     return False
 
             if self.exec_time:
                 use_time = round(time.perf_counter() - start, 3)

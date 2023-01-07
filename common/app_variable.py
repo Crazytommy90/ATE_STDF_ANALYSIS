@@ -68,22 +68,9 @@ class Calculation:
     MAX: float
     LO_LIMIT_TYPE: Union[str, float]
     HI_LIMIT_TYPE: Union[str, float]
-
-
-@dataclass
-class DataLoadModule:
-    """
-    数据载入空间的数据模型
-    """
-    pass
-
-
-@dataclass
-class DataTreeModule:
-    """
-    选择空间中的数据模型
-    """
-    pass
+    ALL_DATA_MIN: float
+    ALL_DATA_MAX: float
+    TEXT: str
 
 
 @dataclass
@@ -114,21 +101,6 @@ class DataModule:
     prr_df: pd.DataFrame = None
     dtp_df: pd.DataFrame = None  # 数据
     ptmd_df: pd.DataFrame = None  # 测试项目相关
-
-
-@dataclass
-class UnStackModule:
-    """
-    unstack数据
-    """
-    # TODO: Must
-    df: pd.DataFrame = None
-    group_df: Dict[str, pd.DataFrame] = None
-    # TODO: Must
-    test_flg: pd.DataFrame = None
-    group_flg: Dict[str, pd.DataFrame] = None
-    # TODO: Optional PAT
-    limit: pd.DataFrame = None
 
 
 class DatatType:
@@ -246,7 +218,10 @@ class TestVariable:
 
     PATHS = (TEMP_PRR_PATH, TEMP_DTP_PATH, TEMP_PTMD_PATH, TEMP_BIN_PATH)
 
-    HDF5_PATH = os.path.join(GlobalVariable.CACHE_PATH, "TEST_DATA.h5")
+    # HDF5_PATH = os.path.join(GlobalVariable.CACHE_PATH, "TEST_DATA.h5")
+    HDF5_PATH = r"D:\1_STDF\STDF_CACHE\TEST_DATA.h5"
+    HDF5_2_PATH = r"D:\1_STDF\STDF_CACHE\TEST.h5"
+    HDF5_3_PATH = r"D:\1_STDF\STDF_CACHE\N49HT00000\DEMO1_CP1.h5"
     # HDF5_PATH = r".\test_data\TEST.h5"
 
     TABLE_PICKLE_PATH = os.path.join(GlobalVariable.CACHE_PATH, '{}.pkl'.format("TABLE_DATA"))

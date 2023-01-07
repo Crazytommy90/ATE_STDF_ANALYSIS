@@ -13,14 +13,14 @@ import pandas as pd
 import numpy as np
 
 from app_test.test_utils.wrapper_utils import Time
-from common.app_variable import PtmdModule, LimitType, DataModule, DatatType, Calculation
+from common.app_variable import PtmdModule, LimitType, DataModule, DatatType, Calculation, FailFlag
 from parser_core.stdf_parser_func import PtmdOptFlag, DtpTestFlag, PtmdParmFlag
 
 
 class CapabilityUtils:
 
     @staticmethod
-    @Time()
+    # @Time()
     def top_fail(top_fail_df: pd.DataFrame, data_df: pd.DataFrame) -> (pd.DataFrame, int):
         """
         TODO:
@@ -33,7 +33,7 @@ class CapabilityUtils:
         """
         all_qty = len(top_fail_df)
         temp_data_df = data_df[data_df.index.isin(top_fail_df.index)]
-        fail_df = temp_data_df[temp_data_df.TEST_FLG & DtpTestFlag.TestFailed == DtpTestFlag.TestFailed]
+        fail_df = temp_data_df[temp_data_df.FAIL_FLG == FailFlag.FAIL]
         fail_qty = len(fail_df)
         top_fail_df = top_fail_df[~top_fail_df.index.isin(fail_df.index)]
         if len(top_fail_df) > all_qty:
@@ -58,16 +58,16 @@ class CapabilityUtils:
             " 逐项计算Top Fail "
             df_use_top_fail, fail_qty = CapabilityUtils.top_fail(
                 df_use_top_fail,
-                dtp_df.loc[row.TEST_ID][:]
+                dtp_df.loc[row.TEST_ID]
             )
             try:
-                top_fail_dict[row.TEXT] += fail_qty
+                top_fail_dict[row.TEST_ID] += fail_qty
             except:
-                top_fail_dict[row.TEXT] = fail_qty
+                top_fail_dict[row.TEST_ID] = fail_qty
         return top_fail_dict
 
     @staticmethod
-    @Time()
+    # @Time()
     def re_cal_top_fail(ptmd: PtmdModule, top_fail_df: pd.DataFrame, data_df: pd.DataFrame):
         """
         重新计算, 使用ptmd中包含的新的limit信息
@@ -122,12 +122,12 @@ class CapabilityUtils:
             df_use_top_fail, fail_qty = CapabilityUtils.re_cal_top_fail(
                 row,
                 df_use_top_fail,
-                dtp_df.loc[row.TEST_ID][:]
+                dtp_df.loc[row.TEST_ID]
             )
             try:
-                top_fail_dict[row.TEXT] += fail_qty
+                top_fail_dict[row.TEST_ID] += fail_qty
             except:
-                top_fail_dict[row.TEXT] = fail_qty
+                top_fail_dict[row.TEST_ID] = fail_qty
         return top_fail_dict
 
     @staticmethod
@@ -142,25 +142,27 @@ class CapabilityUtils:
         :return:
         """
 
-        def _mad(factor):
-            """
-            3倍中位数绝对偏差去极值 by CSDN: https://blog.csdn.net/m0_37967652/article/details/122900866
-            """
-            me = np.median(factor)
-            mad = np.median(abs(factor - me))
-            # 求出3倍中位数的上下限制
-            up = me + (3 * 1.4826 * mad)
-            down = me - (3 * 1.4826 * mad)
-            # 利用3倍中位数的值去极值
-            factor = np.where(factor > up, up, factor)
-            factor = np.where(factor < down, down, factor)
-            return factor
+        # def _mad(factor):
+        #     """
+        #     3倍中位数绝对偏差去极值 by CSDN: https://blog.csdn.net/m0_37967652/article/details/122900866
+        #     """
+        #     me = np.median(factor)
+        #     mad = np.median(abs(factor - me))
+        #     # 求出3倍中位数的上下限制
+        #     up = me + (3 * 1.4826 * mad)
+        #     down = me - (3 * 1.4826 * mad)
+        #     # 利用3倍中位数的值去极值
+        #     factor = np.where(factor > up, up, factor)
+        #     factor = np.where(factor < down, down, factor)
+        #     return factor
 
-        data_df["RESULT"] = _mad(data_df["RESULT"])
-        reject_qty = len(data_df[data_df.TEST_FLG & DtpTestFlag.TestFailed == DtpTestFlag.TestFailed])
+        # data_df["RESULT"] = _mad(data_df["RESULT"])
+        fail_exec = data_df.FAIL_FLG == FailFlag.FAIL
+        reject_qty = len(data_df[fail_exec])
+        pass_df = data_df[~fail_exec]
         data_mean, data_min, data_max, data_std, data_median = \
-            data_df.RESULT.mean(), data_df.RESULT.min(), data_df.RESULT.max(), data_df.RESULT.std(), \
-            data_df.RESULT.median()
+            pass_df.RESULT.mean(), pass_df.RESULT.min(), pass_df.RESULT.max(), pass_df.RESULT.std(), \
+            pass_df.RESULT.median()
         if data_std == 0:
             data_std = 1E-05
         cpk = round(min([(ptmd.HI_LIMIT - data_mean) / (3 * data_std),
@@ -191,10 +193,13 @@ class CapabilityUtils:
             "FAIL_RATE": round(top_fail_qty / len(data_df) * 100, 3),
             "REJECT_QTY": reject_qty,
             "REJECT_RATE": round(reject_qty / len(data_df) * 100, 3),
-            "MIN": round(data_min, 6),  # 注意, 是取得有效区域的数据
-            "MAX": round(data_max, 6),  # 注意, 是取得有效区域的数据
+            "MIN": round(data_min, 6),  # 注意, 是取得PASS区域的数据
+            "MAX": round(data_max, 6),  # 注意, 是取得PASS区域的数据
             "LO_LIMIT_TYPE": l_limit_type,
             "HI_LIMIT_TYPE": h_limit_type,
+            "ALL_DATA_MIN": round(data_df.RESULT.min(), 6),
+            "ALL_DATA_MAX": round(data_df.RESULT.max(), 6),
+            "TEXT": ptmd.TEXT,
         }
         # return Calculation(**temp_dict)
         return temp_dict
@@ -229,6 +234,9 @@ class CapabilityUtils:
             "MAX": 1.1,  # 注意, 是取得有效区域的数据
             "LO_LIMIT_TYPE": LimitType.ThenLowLimit,
             "HI_LIMIT_TYPE": LimitType.EqualHighLimit,
+            "ALL_DATA_MIN": -0.1,
+            "ALL_DATA_MAX": 1.1,
+            "TEXT": ptmd.TEXT,
         }
         # return Calculation(**temp_dict)
         return temp_dict
@@ -248,13 +256,13 @@ class CapabilityUtils:
             data_df = df_module.dtp_df.loc[row.TEST_ID].loc[:].copy()  # TODO: 10%时间开销
             if row.DATAT_TYPE in {DatatType.PTR, DatatType.MPR}:
                 cal_data = CapabilityUtils.calculation_ptr(
-                    row, top_fail_dict[row.TEXT], data_df
+                    row, top_fail_dict[row.TEST_ID], data_df
                 )
                 capability_key_list.append(cal_data)
                 continue
             if row.DATAT_TYPE == DatatType.FTR:
                 cal_data = CapabilityUtils.calculation_ftr(
-                    row, top_fail_dict[row.TEXT], data_df
+                    row, top_fail_dict[row.TEST_ID], data_df
                 )
                 capability_key_list.append(cal_data)
                 continue

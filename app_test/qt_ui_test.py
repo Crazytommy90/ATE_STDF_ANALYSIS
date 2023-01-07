@@ -44,14 +44,18 @@ class QtUiCase(unittest.TestCase, Hdf5DataLoad):
 
     @Tester()
     def test_console_ui(self):
-        app = QApplication(sys.argv)
+        app = QApplication.instance()
+        if app is None:
+            app = QApplication(sys.argv)
         my_win = ConsoleWidget()
         my_win.show()
         app.exec_()
 
     @Tester()
     def test_setting_ui(self):
-        app = QApplication(sys.argv)
+        app = QApplication.instance()
+        if app is None:
+            app = QApplication(sys.argv)
         win = SettingWidget()
         win.show()
         app.exec_()
@@ -61,7 +65,9 @@ class QtUiCase(unittest.TestCase, Hdf5DataLoad):
         选取数据
         :return:
         """
-        app = QApplication(sys.argv)
+        app = QApplication.instance()
+        if app is None:
+            app = QApplication(sys.argv)
         win = FileLoadWidget(self.summary)
         win.directory_select_test(TestVariable.STDF_FILES_PATH)
         win.show()

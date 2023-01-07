@@ -46,10 +46,7 @@ class Hdf5DataLoad:
         """
         if self.load:
             return
-        ID = 1
-        self.df_module = ParserData.load_hdf5_test(TestVar.HDF5_PATH, ID)
-        self.df_module.prr_df.set_index(["ID", "PART_ID"], inplace=True)
-        self.df_module.dtp_df.set_index(["TEST_ID", "ID", "PART_ID"], inplace=True)
+        self.df_module = ParserData.load_hdf5_analysis(TestVar.HDF5_PATH, 0, 1, 1)
         if self.df_module is None:
             raise Exception("ParserData.load_hdf5 fail!")
         self.summary = SummaryCore()
@@ -58,7 +55,7 @@ class Hdf5DataLoad:
             {
                 "FILE_PATH": "DEMO",
                 "FILE_NAME": "DEMO",
-                "ID": ID,
+                "ID": 1,
                 "LOT_ID": "DEMO",
                 "SBLOT_ID": "DEMO",
                 "WAFER_ID": "WAFER",
@@ -72,12 +69,33 @@ class Hdf5DataLoad:
                 'SETUP_T': 0,
                 'START_T': 0,
                 'SITE_CNT': 0,
-                **ParserData.get_yield(self.df_module.prr_df, 0, 1),
+                # **ParserData.get_yield(df_module.prr_df, 0, 1),
                 "PART_FLAG": "0",
                 "READ_FAIL": "1",
                 "HDF5_PATH": TestVar.HDF5_PATH,
+            },
+            {
+                "FILE_PATH": "DEMO",
+                "FILE_NAME": "DEMO",
+                "ID": 2,
+                "LOT_ID": "DEMO",
+                "SBLOT_ID": "DEMO",
+                "WAFER_ID": "WAFER",
+                "BLUE_FILM_ID": "",
+                'TEST_COD': 'CP1',
+                'FLOW_ID': 'R0',
+                'PART_TYP': 'ESP32',
+                'JOB_NAM': 'TEST_DEMO',
+                'TST_TEMP': '25',
+                'NODE_NAM': 'Python',
+                'SETUP_T': 0,
+                'START_T': 0,
+                'SITE_CNT': 0,
+                # **ParserData.get_yield(df_2_module.prr_df, 0, 1),
+                "PART_FLAG": "0",
+                "READ_FAIL": "1",
+                "HDF5_PATH": TestVar.HDF5_2_PATH,
             }
         ]
         self.summary.set_data(summary_list)
-        self.li.set_data(*self.summary.load_select_data([1]))
         self.load = True
