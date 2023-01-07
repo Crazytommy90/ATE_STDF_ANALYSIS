@@ -123,9 +123,9 @@ class JmpFactory:
             JmpBox.new_outline_box(
                 *JmpBox.new_group_item(
                     *[JmpPlot.trans_visual_points(arg,
-                                                   True,
-                                                   JmpUtils.send_to_report(JmpPlot.visual_dis(arg, y_max, y_min)),
-                                                   percent)
+                                                  True,
+                                                  JmpUtils.send_to_report(JmpPlot.visual_dis(arg, y_max, y_min)),
+                                                  percent)
                       for arg in calculation_capability.values()],
                     col=UiGlobalVariable.JmpPlotColumn), title=title))
         return jmp_script

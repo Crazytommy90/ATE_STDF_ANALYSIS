@@ -31,6 +31,7 @@ class JmpFile:
         return """
         Open(
             "{filepath}",
+            Invisible,
             Import Settings(
                 End Of Line( CRLF, CR, LF ),
                 End Of Field( Comma, CSV( 1 ) ),

@@ -80,7 +80,6 @@ class JmpPlot:
 
     @staticmethod
     def trans_distribution(arg: dict, send_to_report: str) -> str:
-        test_text = str(arg["TEST_NUM"]) + ":" + arg["TEST_TXT"]
         return """
         Graph Builder(
             Size( 1085, 320 ),
@@ -91,11 +90,10 @@ class JmpPlot:
             
             {send_to_report}
         )
-        """.format(test_text=test_text, send_to_report=send_to_report)
+        """.format(test_text=arg["TEXT"], send_to_report=send_to_report)
 
     @staticmethod
     def trans_box(arg: dict, send_to_report: str) -> str:
-        test_text = str(arg["TEST_NUM"]) + ":" + arg["TEST_TXT"]
         return """
         Graph Builder(
             Size( 1085, 320 ),
@@ -106,11 +104,10 @@ class JmpPlot:
 
             {send_to_report}
         )
-        """.format(test_text=test_text, send_to_report=send_to_report)
+        """.format(test_text=arg["TEXT"], send_to_report=send_to_report)
 
     @staticmethod
     def trans_box_point(arg: dict, send_to_report: str) -> str:
-        test_text = str(arg["TEST_NUM"]) + ":" + arg["TEST_TXT"]
         return """
         Graph Builder(
             Size( 1085, 320 ),
@@ -121,11 +118,10 @@ class JmpPlot:
 
             {send_to_report}
         )
-        """.format(test_text=test_text, send_to_report=send_to_report)
+        """.format(test_text=arg["TEXT"], send_to_report=send_to_report)
 
     @staticmethod
     def trans_scatter(arg: dict, send_to_report: str) -> str:
-        test_text = str(arg["TEST_NUM"]) + ":" + arg["TEST_TXT"]
         return """
         Graph Builder(
             Size( 1085, 380 ),
@@ -135,12 +131,11 @@ class JmpPlot:
             Elements( Points( X, Y, Legend( 11 ) ), ),
             {send_to_report}
         )
-        """.format(test_text=test_text, send_to_report=send_to_report)
+        """.format(test_text=arg["TEXT"], send_to_report=send_to_report)
 
     @staticmethod
     def trans_scale_dis(cpk_info: dict) -> str:
         decimal = UiGlobalVariable.JmpPlotFloatRound
-        test_text = str(cpk_info["TEST_NUM"]) + ":" + cpk_info["TEST_TXT"]
         l_limit = cpk_info["LO_LIMIT"]
         h_limit = cpk_info["HI_LIMIT"]
         if UiGlobalVariable.JmpScreen == 0:
@@ -153,6 +148,9 @@ class JmpPlot:
         if UiGlobalVariable.JmpScreen == 1:
             l_limit = cpk_info["MIN"]
             h_limit = cpk_info["MAX"]
+        if UiGlobalVariable.JmpScreen == 2:
+            l_limit = cpk_info["ALL_DATA_MIN"]
+            h_limit = cpk_info["ALL_DATA_MAX"]
         if UiGlobalVariable.JmpScreen == 3:
             rig_x = cpk_info["STD"] * UiGlobalVariable.JmpMeanAddSubSigma
             l_limit = cpk_info["AVG"] - rig_x
@@ -176,8 +174,13 @@ class JmpPlot:
                 Add Ref Line( {avg}, "Solid", "Medium Dark Blue", "良品均值({avg})", 1)
                     }}
             )
-        """.format(test_text=test_text, decimal=decimal, mIn=l_limit - displace, mAx=h_limit + displace,
-                   l_limit=round(l_limit, decimal), h_limit=round(h_limit, decimal), avg=round(avg, decimal), iNc=inc)
+        """.format(test_text=cpk_info["TEXT"], decimal=decimal,
+                   mIn=round(l_limit - displace, decimal),
+                   mAx=round(h_limit + displace, decimal),
+                   l_limit=round(l_limit, decimal),
+                   h_limit=round(h_limit, decimal),
+                   avg=round(avg, decimal),
+                   iNc=round(inc, decimal))
 
     @staticmethod
     def trans_visual_points(arg: dict, group: bool, send_to_report: str, percent: float) -> str:
@@ -186,7 +189,6 @@ class JmpPlot:
         TODO: Elements( Contour( X, Y, Legend( 5 ) ) ) 等高线
         """
         y = int(650 * percent * 0.6) + 10
-        test_text = str(arg["TEST_NUM"]) + ":" + arg["TEST_TXT"]
         return """
         Graph Builder(
             // Size( 650, {0} ),
@@ -197,7 +199,7 @@ class JmpPlot:
 
             {send_to_report}
         )
-        """.format(y, test_text, " Wrap( :GROUP ) " if group else "", send_to_report=send_to_report)
+        """.format(y, arg["TEXT"], " Wrap( :GROUP ) " if group else "", send_to_report=send_to_report)
 
     @staticmethod
     def trans_visual_heatmap(arg: dict, group: bool, send_to_report: str, percent: float) -> str:
@@ -206,7 +208,6 @@ class JmpPlot:
         TODO: Elements( Contour( X, Y, Legend( 5 ) ) ) 等高线
         """
         y = int(650 * percent * 0.6) + 10
-        test_text = str(arg["TEST_NUM"]) + ":" + arg["TEST_TXT"]
         return """
         Graph Builder(
             Size( 570, 580 ),
@@ -216,7 +217,7 @@ class JmpPlot:
 
             {send_to_report}
         )
-        """.format(y, test_text, " Wrap( :GROUP ) " if group else "", send_to_report=send_to_report)
+        """.format(y, arg["TEXT"], " Wrap( :GROUP ) " if group else "", send_to_report=send_to_report)
 
     @staticmethod
     def visual_dis(arg, y_max, y_min, mark_size=10) -> str:
@@ -226,7 +227,6 @@ class JmpPlot:
         #         {Marker( "FilledSquare" )},
         #         )
         #     """  # .format(mark_size=mark_size) # , Marker Size( {mark_size} )
-        test_text = str(arg["TEST_NUM"]) + ":" + arg["TEST_TXT"]
         return """
             Dispatch(
                 ,
@@ -259,7 +259,10 @@ class JmpPlot:
                     )
                 }}
             )
-            """.format(test_text=test_text, y_max=y_max, y_min=y_min, mark_pro="")
+            """.format(test_text=arg["TEXT"],
+                       y_max=round(y_max, UiGlobalVariable.JmpPlotFloatRound),
+                       y_min=round(y_min, UiGlobalVariable.JmpPlotFloatRound),
+                       mark_pro="")
 
     @staticmethod
     def variability_chart(args):

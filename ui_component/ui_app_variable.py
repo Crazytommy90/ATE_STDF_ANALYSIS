@@ -73,7 +73,7 @@ class UiGlobalVariable:
 
                 {'name': language.JmpSetting["JmpScreen"], 'type': 'list',
                  'value': JmpScreen,
-                 'limits': {"LCL-To-UCL": 0, "PassMin-To-PassMax": 1, "Average_Sigma": 3}},
+                 'limits': {"LCL-To-UCL": 0, "PassMin-To-PassMax": 1, "DataMin-To-DataMax": 2, "Average_Sigma": 3}},
 
                 {'name': language.JmpSetting["JmpMeanAddSubSigma"], 'type': 'int',
                  'value': JmpMeanAddSubSigma, },

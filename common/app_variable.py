@@ -178,7 +178,7 @@ class GlobalVariable:
     PTMD_TYPE = (U2, str, U4, str, U1, U1, I1, I1, I1, R4, R4, str)
     PTMD_TYPE_DICT = dict(zip(PTMD_HEAD, PTMD_TYPE))
 
-    JMP_SCRIPT_HEAD = ["GROUP", "DA_GROUP", "X_COORD", "Y_COORD", "HARD_BIN", "SOFT_BIN"]
+    JMP_SCRIPT_HEAD = ["GROUP", "DA_GROUP", "PART_ID", "X_COORD", "Y_COORD", "HARD_BIN", "SOFT_BIN"]
 
     TEST_ID_COLUMN = 0
     TEST_TYPE_COLUMN = 1

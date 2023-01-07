@@ -169,14 +169,14 @@ class BasePlot:
             l_limit = row["MIN"]
             h_limit = row["MAX"]
             self.set_lines(
-                VAILD_MIN=h_limit,
-                VAILD_MAX=l_limit,
+                VAILD_MAX=h_limit,
+                VAILD_MIN=l_limit,
                 AVG=row["AVG"],
             )
             return
         if UiGlobalVariable.GraphScreen == 2:
-            l_limit = self.li.to_chart_csv_data.df[self.key].min()
-            h_limit = self.li.to_chart_csv_data.df[self.key].max()
+            l_limit = row["ALL_DATA_MIN"]
+            h_limit = row["ALL_DATA_MAX"]
             self.set_lines(
                 DATA_MIN=h_limit,
                 DATA_MAX=l_limit,

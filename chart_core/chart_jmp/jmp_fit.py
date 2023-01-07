@@ -27,7 +27,7 @@ class JmpFit:
         return """
         Oneway(
         Y( :Name( "{test_text}" ) ),
-        X( :"GROUP" ),
+        X( :"ALL_GROUP" ),
         All Graphs( 0 ),
         Means and Std Dev( 1 ),
         Compare Densities( 1 ),
@@ -54,6 +54,9 @@ class JmpFit:
         if UiGlobalVariable.JmpScreen == 1:
             l_limit = cpk_info["MIN"]
             h_limit = cpk_info["MAX"]
+        if UiGlobalVariable.JmpScreen == 2:
+            l_limit = cpk_info["ALL_DATA_MIN"]
+            h_limit = cpk_info["ALL_DATA_MAX"]
         if UiGlobalVariable.JmpScreen == 3:
             rig_x = cpk_info["STD"] * UiGlobalVariable.JmpMeanAddSubSigma
             l_limit = cpk_info["AVG"] - rig_x

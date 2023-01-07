@@ -190,9 +190,10 @@ class CapabilityUtils:
             "CPK": abs(cpk),
             "QTY": len(data_df),
             "FAIL_QTY": top_fail_qty,
-            "FAIL_RATE": round(top_fail_qty / len(data_df) * 100, 3),
+            # TODO: 注意 top fail的Rate一定是要%总颗数,不能%测试颗数, 待更新
+            "FAIL_RATE": "{}%".format(round(top_fail_qty / len(data_df) * 100, 3)),
             "REJECT_QTY": reject_qty,
-            "REJECT_RATE": round(reject_qty / len(data_df) * 100, 3),
+            "REJECT_RATE": "{}%".format(round(reject_qty / len(data_df) * 100, 3)),
             "MIN": round(data_min, 6),  # 注意, 是取得PASS区域的数据
             "MAX": round(data_max, 6),  # 注意, 是取得PASS区域的数据
             "LO_LIMIT_TYPE": l_limit_type,
@@ -227,9 +228,10 @@ class CapabilityUtils:
             "CPK": np.nan,
             "QTY": len(data_df),
             "FAIL_QTY": top_fail_qty,
-            "FAIL_RATE": round(top_fail_qty / len(data_df) * 100, 3),
+            # TODO: 注意 top fail的Rate一定是要%总颗数,不能%测试颗数, 待更新
+            "FAIL_RATE": "{}%".format(round(top_fail_qty / len(data_df) * 100, 3)),
             "REJECT_QTY": reject_qty,
-            "REJECT_RATE": round(reject_qty / len(data_df) * 100, 3),
+            "REJECT_RATE": "{}%".format(round(reject_qty / len(data_df) * 100, 3)),
             "MIN": -0.1,  # 注意, 是取得有效区域的数据
             "MAX": 1.1,  # 注意, 是取得有效区域的数据
             "LO_LIMIT_TYPE": LimitType.ThenLowLimit,
